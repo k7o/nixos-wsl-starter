@@ -35,7 +35,7 @@
     zip
     # cloud, k8s and CLI tools requested (from unstable)
     azure-cli
-    azcopy
+    azure-storage-azcopy
     istioctl
     k6
     kubectl
