@@ -21,7 +21,7 @@
     jq
     killall
     mosh
-    neovim
+    neovim    
     procs
     ripgrep
     sd
@@ -60,6 +60,7 @@
     # .NET development - use latest from unstable
     dotnetCorePackages.sdk_9_0-bin
     go
+    nodejs_24
   ];
 
   stable-packages = with pkgs; [
