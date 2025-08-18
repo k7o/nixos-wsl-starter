@@ -2,7 +2,7 @@
 set shell := ['bash', '-lc']
 
 # Default task
-default := "build"
+default := "rebuild"
 
 # Apply the system configuration from ~/configuration
 rebuild:
