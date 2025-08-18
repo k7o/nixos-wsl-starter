@@ -40,7 +40,7 @@
     k6
     kubectl
     kubelogin
-    helm
+    kubernetes-helm
     kustomize
     kind
     k3d
