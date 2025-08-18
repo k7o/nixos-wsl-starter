@@ -1,155 +1,75 @@
-# nixos-wsl-starter
+# NixOS WSL Starter
 
-This repository is intended to be a sane, batteries-included starter template
-for running a [JeezyVim](https://github.com/LGUG2Z/JeezyVim)-powered NixOS
-development environment on WSL.
+A minimal, batteries-included starter template for running NixOS on WSL with
+Home Manager for user configuration. It provides a sensible default set of
+tools and a straightforward `home.nix` and `wsl.nix` you can adapt to your
+workflow.
 
-If you don't want to dig into NixOS too much right now, the only file you need
-to concern yourself with is [home.nix](home.nix). This is where you can add and
-remove binaries to your global `$PATH`.
+If you prefer a quick edit surface, `home.nix` is the primary place to add or
+remove packages and set per-user configuration. `wsl.nix` contains WSL-specific
+options (automount, interop, generateHosts, etc.) and system-level packages.
 
-Go to [https://search.nixos.org](https://search.nixos.org/packages) to find the
-correct package names, though usually they will be what you expect them to be
-in other package managers.
+Use https://search.nixos.org/packages to look up package names when editing
+`home.nix`.
 
-`unstable-packages` is for packages that you want to always keep at the latest
-released versions, and `stable-packages` is for packages that you want to track
-with the current release of NixOS (currently 24.05).
-
-If you want to update the versions of the available `unstable-packages`, run
-`nix flake update` to pull the latest version of the Nixpkgs repository and
-then apply the changes.
-
-Make sure to look at all the `FIXME` notices in the various files which are
-intended to direct you to places where you may want to make configuration
-tweaks.
-
-If you found this starter template useful, please consider
-[sponsoring](https://github.com/sponsors/LGUG2Z) and [subscribing to my YouTube
-channel](https://www.youtube.com/channel/UCeai3-do-9O4MNy9_xjO6mg?sub_confirmation=1).
-
-## What Is Included
-
-This starter is a lightly-opinionated take on a productive terminal-driven
-development environment based on my own preferences. However, it is trivial to
-customize to your liking both by removing and adding tools that you prefer.
-
-- The default editor is [JeezyVim](https://github.com/LGUG2Z/JeezyVim)
-- `win32yank` is used to ensure perfect bi-directional copying and pasting to
-  and from Windows GUI applications and LunarVim running in WSL
-- The default shell is `fish`
-- Native `docker` (ie. Linux, not Windows) is enabled by default
-- The prompt is [Starship](https://starship.rs/)
-- [`fzf`](https://github.com/junegunn/fzf),
-  [`lsd`](https://github.com/lsd-rs/lsd),
-  [`zoxide`](https://github.com/ajeetdsouza/zoxide), and
-  [`broot`](https://github.com/Canop/broot) are integrated into `fish` by
-  default
-  - These can all be disabled easily by setting `enable = false` in
-    [home.nix](home.nix), or just removing the lines all together
-- [`direnv`](https://github.com/direnv/direnv) is integrated into `fish` by
-  default
-- `git` config is generated in [home.nix](home.nix) with options provided to
-  enable private HTTPS clones with secret tokens
-- `fish` config is generated in [home.nix](home.nix) and includes git aliases,
-  useful WSL aliases
-
-### win32yank
-
-There have been some recent changes in WSL2 that make running `win32yank`
-within WSL2 very slow. You should install this on Windows by running `scoop
-install win32yank` or compiling it from source, and then adding it to your `$PATH`:
-
-```nix
-{
-    programs.fish = {
-      interactiveShellInit = ''
-        fish_add_path --append /mnt/c/Users/<Your Windows Username>/scoop/apps/win32yank/0.1.1
-      '';
-    };
-}
-```
+Quick notes
+- `unstable-packages` in this flake is for packages you want from nixpkgs
+  unstable. `stable-packages` tracks the release channel used by the flake.
+- Run `nix flake update` to refresh the flake inputs, then rebuild to apply
+  changes.
+- Read `FIXME` comments in the config files — they point to common places you
+  may want to tweak.
 
 ## Quickstart
 
-[![Watch the walkthrough video](https://img.youtube.com/vi/ZuVQds2hncs/hqdefault.jpg)](https://www.youtube.com/watch?v=ZuVQds2hncs)
+- [Install](https://nix-community.github.io/NixOS-WSL/install.html) the NixOS WSL Distribution.
 
-- Get the [latest
-  release](https://github.com/LGUG2Z/nixos-wsl-starter/releases)
-- Install it (tweak the command to your desired paths):
-
-```powershell
-wsl --import NixOS .\NixOS\ .\nixos-wsl.tar.gz --version 2
-```
-
-- Enter the distro:
-
-```powershell
-wsl -d NixOS
-```
-
-- Get a copy of this repo (you'll probably want to fork it eventually):
+- Clone the repo and edit the configuration:
 
 ```bash
-git clone https://github.com/LGUG2Z/nixos-wsl-starter.git /tmp/configuration
+git clone https://github.com/k7o/nixos-wsl-starter.git /tmp/configuration
 cd /tmp/configuration
 ```
 
-- Change the username to your desired username in `flake.nix` with `nvim` (or
-  whichever editor you prefer)
-- Install `win32yank` with `scoop` and add it to your `$PATH` in NixOS
-- Apply the configuration and shutdown the WSL2 VM
+- Edit `wsl.nix`/`home.nix` to set your username and preferred packages.
+
+- Apply the configuration and (optionally) restart WSL:
 
 ```bash
-sudo nixos-rebuild switch --flake /tmp/configuration && sudo shutdown -h now
+sudo nixos-rebuild switch --flake /tmp/configuration
+# From Windows you can run: wsl --shutdown
 ```
 
-- Reconnect to the WSL2 VM
-
-```bash
-wsl -d NixOS
-```
-
-- `cd ~` and then `pwd` should now show `/home/<YOUR_USERNAME>`
-- Move the configuration to your new home directory
+- After reconnecting, move the configuration to your home directory if desired:
 
 ```bash
 mv /tmp/configuration ~/configuration
-```
-
-- Go through all the `FIXME:` notices in `~/configuration` and make changes
-  wherever you want
-- Apply the configuration
-
-```bash
 sudo nixos-rebuild switch --flake ~/configuration
 ```
 
-Note: If developing in Rust, you'll still be managing your toolchains and
-components like `rust-analyzer` with `rustup`!
+## Quick commands (Justfile)
 
-## Project Layout
+This repository includes a minimal `Justfile` with a few Nix-focused recipes. It lives at the repo root and provides convenient wrappers for common operations. Examples:
 
-In order to keep the template as approachable as possible for new NixOS users,
-this project uses a flat layout without any nesting or modularization.
+- `just rebuild` — apply the system configuration from `~/configuration` (default)
+- `just flake-update` — update flake inputs (recreates the lock file)
+- `just update-and-rebuild` — update inputs then rebuild
+- `just gc` — aggressive garbage collect of old store paths (destructive)
 
-- `flake.nix` is where dependencies are specified
-  - `nixpkgs` is the current release of NixOS
-  - `nixpkgs-unstable` is the current trunk branch of NixOS (ie. all the
-    latest packages)
-  - `home-manager` is used to manage everything related to your home
-    directory (dotfiles etc.)
-  - `nur` is the community-maintained [Nix User
-    Repositories](https://nur.nix-community.org/) for packages that may not
-    be available in the NixOS repository
-  - `nixos-wsl` exposes important WSL-specific configuration options
-  - `nix-index-database` tells you how to install a package when you run a
-    command which requires a binary not in the `$PATH`
-- `wsl.nix` is where the VM is configured
-  - The hostname is set here
-  - The default shell is set here
-  - User groups are set here
-  - WSL configuration options are set here
-  - NixOS options are set here
-- `home.nix` is where packages, dotfiles, terminal tools, environment variables
-  and aliases are configured
+Run `just` with no arguments to list available recipes.
+
+## Defaults in this template
+
+- Editor: Neovim (`neovim` is included in `unstable-packages`) — set the
+  `sessionVariables.EDITOR` in `home.nix` if you prefer something else.
+- Shell: Bash (Home Manager installs `bashInteractive` by default here).
+- Starship prompt is configured in `home.nix`.
+- Docker (Linux) integration and Docker Desktop passthrough are available via
+  `wsl.nix` options.
+
+## Project layout
+
+- `flake.nix` — flake inputs and packages (nixpkgs, nixpkgs-unstable, home-manager, etc.)
+- `wsl.nix` — system-level and WSL-specific configuration
+- `home.nix` — Home Manager configuration for your user (packages, dotfiles,
+  environment variables, aliases)

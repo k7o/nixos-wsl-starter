@@ -15,8 +15,6 @@
 
   outputs = inputs:
     with inputs; let
-      secrets = builtins.fromJSON (builtins.readFile "${self}/secrets.json");
-
       nixpkgsWithOverlays = system: (import nixpkgs rec {
         inherit system;
 
@@ -45,7 +43,7 @@
       };
 
       argDefaults = {
-        inherit secrets inputs self nix-index-database;
+        inherit inputs self nix-index-database;
         channels = {
           inherit nixpkgs nixpkgs-unstable;
         };
