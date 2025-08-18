@@ -248,6 +248,12 @@ if command -v oras >/dev/null 2>&1; then
   source <(oras completion bash) 2>/dev/null || true
 fi
 
+# Initialize starship prompt if installed
+if command -v starship >/dev/null 2>&1; then
+  # Prefer the eval form to set PS1 and other prompt internals for bash
+  eval "$(starship init bash)" 2>/dev/null || true
+fi
+
 '';
 
   # Ensure login shells source ~/.bashrc so interactive settings and completions load
