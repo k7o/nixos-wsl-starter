@@ -47,12 +47,13 @@
     k9s
     kube-bench
     kubectx
-    opa
+    open-policy-agent
     stern
     yq
     flux
     docker
     gh
+    regal
     rsync
     openssl
     cilium-cli
