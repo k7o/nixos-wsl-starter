@@ -69,6 +69,7 @@
 
     # key tools
     gh # for bootstrapping
+    git-credential-manager
     just
 
     # local dev stuf
