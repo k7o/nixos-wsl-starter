@@ -13,7 +13,6 @@
   networking.hostName = "${hostname}";
 
   # FIXME: change your shell here if you don't want bash
-  programs.bash.enable = true;
   environment.shells = [ pkgs.bashInteractive ];
 
   environment.enableAllTerminfo = true;
