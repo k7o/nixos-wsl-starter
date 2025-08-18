@@ -262,7 +262,7 @@ README="~/.profile (managed by home.nix)"
 # avoid re-sourcing ~/.bashrc multiple times in the same session.
 if [ -n "$BASH_VERSION" ]; then
   # session guard to avoid duplicate sourcing
-  if [ -z "${__HOME_BASHRC_SOURCED_BY_PROFILE+x}" ]; then
+  if [ -z "$__HOME_BASHRC_SOURCED_BY_PROFILE" ]; then
     export __HOME_BASHRC_SOURCED_BY_PROFILE=1
     if [ -f "$HOME/.bashrc" ]; then
       . "$HOME/.bashrc"
