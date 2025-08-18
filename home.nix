@@ -50,7 +50,7 @@
     open-policy-agent
     stern
     yq
-    flux
+    fluxcd
     docker
     gh
     regal
