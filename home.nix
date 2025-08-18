@@ -18,6 +18,7 @@
     fx
     git
     git-crypt
+    gnutar
     htop
     jq
     killall
@@ -30,26 +31,45 @@
     unzip
     vim
     wget
+    yq
     zip
+    # cloud, k8s and CLI tools requested (from unstable)
+    azure-cli
+    azcopy
+    istioctl
+    k6
+    kubectl
+    kubelogin
+    helm
+    kustomize
+    kind
+    k3d
+    k9s
+    kube-bench
+    kubectx
+    opa
+    stern
+    yq
+    flux
+    docker
+    gh
+    rsync
+    openssl
+    cilium-cli
+    oras
+    sops
+    step
+    powershell
+    # .NET development - use latest from unstable
+    dotnetCorePackages.sdk_9_0-bin  
   ];
 
   stable-packages = with pkgs; [
     # FIXME: customize these stable packages to your liking for the languages that you use
 
-    # FIXME: you can add plugins, change keymaps etc using (jeezyvim.nixvimExtend {})
-    # https://github.com/LGUG2Z/JeezyVim#extending
-    jeezyvim
-
     # key tools
     gh # for bootstrapping
     just
-
-    # core languages
-    rustup
-
-    # rust stuff
-    cargo-cache
-    cargo-expand
 
     # local dev stuf
     mkcert
@@ -63,6 +83,8 @@
     nodePackages.yaml-language-server
     nil # nix
 
+    openssl
+
     # formatters and linters
     alejandra # nix
     deadnix # nix
@@ -70,13 +92,15 @@
     shellcheck
     shfmt
     statix # nix
+
+  # moved to unstable-packages to get latest versions
   ];
 in {
   imports = [
     nix-index-database.hmModules.nix-index
   ];
 
-  home.stateVersion = "22.11";
+  home.stateVersion = "25.05";
 
   home = {
     username = "${username}";
@@ -84,7 +108,7 @@ in {
 
     sessionVariables.EDITOR = "nvim";
     # FIXME: set your preferred $SHELL
-    sessionVariables.SHELL = "/etc/profiles/per-user/${username}/bin/fish";
+    sessionVariables.SHELL = "/etc/profiles/per-user/${username}/bin/bash";
   };
 
   home.packages =
@@ -100,7 +124,6 @@ in {
   programs = {
     home-manager.enable = true;
     nix-index.enable = true;
-    nix-index.enableFishIntegration = true;
     nix-index-database.comma.enable = true;
 
     # FIXME: disable this if you don't want to use the starship prompt
@@ -120,18 +143,6 @@ in {
     };
 
     # FIXME: disable whatever you don't want
-    fzf.enable = true;
-    fzf.enableFishIntegration = true;
-    lsd.enable = true;
-    lsd.enableAliases = true;
-    zoxide.enable = true;
-    zoxide.enableFishIntegration = true;
-    zoxide.options = ["--cmd cd"];
-    broot.enable = true;
-    broot.enableFishIntegration = true;
-    direnv.enable = true;
-    direnv.nix-direnv.enable = true;
-
     git = {
       enable = true;
       package = pkgs.unstable.git;
@@ -141,8 +152,8 @@ in {
         side-by-side = true;
         navigate = true;
       };
-      userEmail = ""; # FIXME: set your git email
-      userName = ""; #FIXME: set your git username
+      userEmail = "eric@example.com"; # FIXME: set your git email
+      userName = "eric"; #FIXME: set your git username
       extraConfig = {
         # FIXME: uncomment the next lines if you want to be able to clone private https repos
         # url = {
@@ -165,89 +176,101 @@ in {
         };
       };
     };
-
-    # FIXME: This is my fish config - you can fiddle with it if you want
-    fish = {
-      enable = true;
-      # FIXME: run 'scoop install win32yank' on Windows, then add this line with your Windows username to the bottom of interactiveShellInit
-      # fish_add_path --append /mnt/c/Users/<Your Windows Username>/scoop/apps/win32yank/0.1.1
-      interactiveShellInit = ''
-        ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
-
-        ${pkgs.lib.strings.fileContents (pkgs.fetchFromGitHub {
-            owner = "rebelot";
-            repo = "kanagawa.nvim";
-            rev = "de7fb5f5de25ab45ec6039e33c80aeecc891dd92";
-            sha256 = "sha256-f/CUR0vhMJ1sZgztmVTPvmsAgp0kjFov843Mabdzvqo=";
-          }
-          + "/extras/kanagawa.fish")}
-
-        set -U fish_greeting
-      '';
-      functions = {
-        refresh = "source $HOME/.config/fish/config.fish";
-        take = ''mkdir -p -- "$1" && cd -- "$1"'';
-        ttake = "cd $(mktemp -d)";
-        show_path = "echo $PATH | tr ' ' '\n'";
-        posix-source = ''
-          for i in (cat $argv)
-            set arr (echo $i |tr = \n)
-            set -gx $arr[1] $arr[2]
-          end
-        '';
-      };
-      shellAbbrs =
-        {
-          gc = "nix-collect-garbage --delete-old";
-        }
-        # navigation shortcuts
-        // {
-          ".." = "cd ..";
-          "..." = "cd ../../";
-          "...." = "cd ../../../";
-          "....." = "cd ../../../../";
-        }
-        # git shortcuts
-        // {
-          gapa = "git add --patch";
-          grpa = "git reset --patch";
-          gst = "git status";
-          gdh = "git diff HEAD";
-          gp = "git push";
-          gph = "git push -u origin HEAD";
-          gco = "git checkout";
-          gcob = "git checkout -b";
-          gcm = "git checkout master";
-          gcd = "git checkout develop";
-          gsp = "git stash push -m";
-          gsa = "git stash apply stash^{/";
-          gsl = "git stash list";
-        };
-      shellAliases = {
-        jvim = "nvim";
-        lvim = "nvim";
-        pbcopy = "/mnt/c/Windows/System32/clip.exe";
-        pbpaste = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command 'Get-Clipboard'";
-        explorer = "/mnt/c/Windows/explorer.exe";
-        
-        # To use code as the command, uncomment the line below. Be sure to replace [my-user] with your username. 
-        # If your code binary is located elsewhere, adjust the path as needed.
-        # code = "/mnt/c/Users/[my-user]/AppData/Local/Programs/'Microsoft VS Code'/bin/code";
-      };
-      plugins = [
-        {
-          inherit (pkgs.fishPlugins.autopair) src;
-          name = "autopair";
-        }
-        {
-          inherit (pkgs.fishPlugins.done) src;
-          name = "done";
-        }
-        {
-          inherit (pkgs.fishPlugins.sponge) src;
-          name = "sponge";
-        }
-      ];
-    };
   };
+
+  # Create a basic ~/.bashrc with aliases and functions converted from the previous fish config
+  home.file."/.bashrc".text = ''
+# ~/.bashrc (generated by flake)
+export EDITOR="nvim"
+
+# Aliases
+alias jvim='nvim'
+alias lvim='nvim'
+alias pbcopy='/mnt/c/Windows/System32/clip.exe'
+alias pbpaste="/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Get-Clipboard\""
+alias explorer='/mnt/c/Windows/explorer.exe'
+alias k=kubectl
+complete -F __start_kubectl k
+
+# Functions
+refresh() { source "$HOME/.bashrc"; }
+take() { mkdir -p -- "$1" && cd -- "$1"; }
+ttake() { cd "$(mktemp -d)"; }
+show_path() { echo "$PATH" | tr ':' '\n'; }
+posix_source() {
+  while IFS= read -r i; do
+    IFS='=' read -r name val <<<"$i"
+    export "$name"="$val"
+  done < "$1"
+}
+
+# Load completions for installed tooling
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion bash) 2>/dev/null || true
+fi
+if command -v helm >/dev/null 2>&1; then
+  source <(helm completion bash) 2>/dev/null || true
+fi
+if command -v flux >/dev/null 2>&1; then
+  source <(flux completion bash) 2>/dev/null || true
+fi
+if command -v istioctl >/dev/null 2>&1; then
+  source <(istioctl completion bash) 2>/dev/null || true
+fi
+if command -v k9s >/dev/null 2>&1; then
+  source <(k9s completion bash) 2>/dev/null || true
+fi
+if command -v azcopy >/dev/null 2>&1; then
+  source <(azcopy completion bash) 2>/dev/null || true
+fi
+if command -v gh >/dev/null 2>&1; then
+  source <(gh completion -s bash) 2>/dev/null || true
+fi
+if command -v kind >/dev/null 2>&1; then
+  source <(kind completion bash) 2>/dev/null || true
+fi
+if command -v k3d >/dev/null 2>&1; then
+  source <(k3d completion bash) 2>/dev/null || true
+fi
+if command -v kustomize >/dev/null 2>&1; then
+  source <(kustomize completion bash) 2>/dev/null || true
+fi
+if command -v kube-bench >/dev/null 2>&1; then
+  source <(kube-bench completion bash) 2>/dev/null || true
+fi
+if command -v opa >/dev/null 2>&1; then
+  source <(opa completion bash) 2>/dev/null || true
+fi
+if command -v regal >/dev/null 2>&1; then
+  source <(regal completion bash) 2>/dev/null || true
+fi
+if command -v cilium >/dev/null 2>&1; then
+  source <(cilium completion bash) 2>/dev/null || true
+fi
+if command -v oras >/dev/null 2>&1; then
+  source <(oras completion bash) 2>/dev/null || true
+fi
+
+'';
+
+  # Ensure login shells source ~/.bashrc so interactive settings and completions load
+  home.file."/.profile".text = ''
+README="~/.profile (managed by home.nix)"
+
+# If this file was previously created by another tool, we still
+# avoid re-sourcing ~/.bashrc multiple times in the same session.
+if [ -n "$BASH_VERSION" ]; then
+  # session guard to avoid duplicate sourcing
+  if [ -z "${__HOME_BASHRC_SOURCED_BY_PROFILE+x}" ]; then
+    export __HOME_BASHRC_SOURCED_BY_PROFILE=1
+    if [ -f "$HOME/.bashrc" ]; then
+      . "$HOME/.bashrc"
+    fi
+  else
+    # already sourced in this session, skip
+    :
+  fi
+fi
+
+'';
 }
