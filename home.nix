@@ -59,7 +59,7 @@
     cilium-cli
     oras
     sops
-    step
+    step-cli
     powershell
     # .NET development - use latest from unstable
     dotnetCorePackages.sdk_9_0-bin  
