@@ -31,7 +31,6 @@
     unzip
     vim
     wget
-    yq
     zip
     # cloud, k8s and CLI tools requested (from unstable)
     azure-cli
@@ -49,7 +48,6 @@
     kubectx
     open-policy-agent
     stern
-    yq
     fluxcd
     docker
     gh
@@ -69,7 +67,6 @@
     # FIXME: customize these stable packages to your liking for the languages that you use
 
     # key tools
-    gh # for bootstrapping
     git-credential-manager
     just
 
@@ -84,8 +81,6 @@
     nodePackages.vscode-langservers-extracted # html, css, json, eslint
     nodePackages.yaml-language-server
     nil # nix
-
-    openssl
 
     # formatters and linters
     alejandra # nix
