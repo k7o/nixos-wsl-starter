@@ -79,6 +79,7 @@
     tree
     unzip
     wget
+    yamllint
     zip
   ];
 in {
