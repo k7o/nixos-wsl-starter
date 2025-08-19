@@ -9,33 +9,24 @@
 
   networking.hostName = "${hostname}";
 
-  environment.shells = [ pkgs.bashInteractive ];
   environment.variables.PYTHONWARNINGS = "ignore::FutureWarning";
   environment.enableAllTerminfo = true;
-
+  environment.pathsToLink = [ "/share/bash-completion" ];
+  
   # Provide glibc-style dynamic loader behaviour for bundled native ELF binaries
   # (enables running glibc-linked executables that expect /lib64/ld-linux-x86-64.so.2)
   programs.nix-ld.enable = true;
 
   security.sudo.wheelNeedsPassword = false;
 
-  # FIXME: uncomment the next line to enable SSH
-  # services.openssh.enable = true;
-
   users.users.${username} = {
     isNormalUser = true;
-  shell = pkgs.bashInteractive;
+    shell = pkgs.bashInteractive;
     extraGroups = [
       "wheel"
-      # FIXME: uncomment the next line if you want to run docker without sudo
+      # uncomment the next line if you want to run docker without sudo
       "docker"
     ];
-    # FIXME: add your own hashed password
-    # hashedPassword = "";
-    # FIXME: add your own ssh public key
-    # openssh.authorizedKeys.keys = [
-    #   "ssh-rsa ..."
-    # ];
   };
 
   home-manager.users.${username} = {
@@ -48,12 +39,13 @@
 
   wsl = {
     enable = true;
-    wslConf.automount.root = "/mnt";
-    wslConf.interop.appendWindowsPath = true;
-    wslConf.network.generateHosts = false;
     defaultUser = username;
     startMenuLaunchers = true;
-
+    wslConf = {
+      automount.root = "/mnt";
+      interop.appendWindowsPath = true;
+      network.generateHosts = false;
+    };
     # Enable integration with Docker Desktop (needs to be installed)
     docker-desktop.enable = true;
   };
@@ -76,12 +68,6 @@
         flake = inputs.nixpkgs;
       };
     };
-
-    nixPath = [
-      "nixpkgs=${inputs.nixpkgs.outPath}"
-      "nixos-config=/etc/nixos/configuration.nix"
-      "/nix/var/nix/profiles/per-user/root/channels"
-    ];
 
     package = pkgs.nixVersions.stable;
     extraOptions = ''experimental-features = nix-command flakes'';

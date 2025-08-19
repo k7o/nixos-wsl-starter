@@ -1,17 +1,27 @@
 {
   description = "NixOS configuration";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-  inputs.nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+  inputs = {
 
-  inputs.home-manager.url = "github:nix-community/home-manager/release-25.05";
-  inputs.home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-  inputs.nixos-wsl.url = "github:nix-community/NixOS-WSL";
-  inputs.nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-  inputs.nix-index-database.url = "github:Mic92/nix-index-database";
-  inputs.nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-index-database = {
+      url = "github:Mic92/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+  };
 
   outputs = inputs:
     with inputs; let
@@ -26,7 +36,7 @@
         };
 
         overlays = [
-          (_final: prev: {
+          (final: prev: {
             unstable = import nixpkgs-unstable {
               inherit (prev) system;
               inherit config;
@@ -73,7 +83,7 @@
 
       nixosConfigurations.nixos = mkNixosConfiguration {
         hostname = "nixos";
-        username = "eric"; # FIXME: replace with your own username!
+        username = "eric";
         modules = [
           nixos-wsl.nixosModules.wsl
           ./wsl.nix
