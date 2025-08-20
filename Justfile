@@ -14,7 +14,7 @@ build:
 
 # Update flake inputs (recreate lock file)
 flake-update:
-  nix flake update --recreate-lock-file
+  nix flake update
 
 # Update inputs then rebuild
 update-and-rebuild:
@@ -27,7 +27,7 @@ gc:
 
 # Verify store contents (quick integrity check)
 verify-store:
-  nix store verify --check-contents
+  nix store verify
 
 # Show flake information in JSON
 flake-info:
