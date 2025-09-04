@@ -6,7 +6,6 @@
 }: let
   unstable-packages = with pkgs.unstable; [
     # cloud, k8s and CLI tools requested (from unstable)
-    azure-cli
     azure-storage-azcopy
     git
     istioctl
@@ -39,6 +38,8 @@
   ];
 
   stable-packages = with pkgs; [
+    # include azure-cli from the stable channel to avoid the unstable build issue
+    azure-cli
     alejandra
     bat
     bottom
