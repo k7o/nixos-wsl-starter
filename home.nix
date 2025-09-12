@@ -48,6 +48,7 @@
     curl
     deadnix
     du-dust
+    envsubst
     fd
     findutils
     fx
@@ -56,6 +57,7 @@
     git-crypt
     gnumake
     gnutar
+    hostname-debian
     htop
     httpie
     just
