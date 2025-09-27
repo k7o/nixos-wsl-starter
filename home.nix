@@ -19,6 +19,7 @@
     k3d
     k9s
     kube-bench
+    kubebuilder
     kubectx
     open-policy-agent
     fluxcd
@@ -69,6 +70,7 @@
     nodePackages.prettier
     nodePackages.vscode-langservers-extracted # html, css, json, eslint
     nodePackages.yaml-language-server
+    operator-sdk
     procs
     ripgrep
     rsync
