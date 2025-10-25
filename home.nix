@@ -72,6 +72,7 @@
     nodePackages.yaml-language-server
     operator-sdk
     procs
+    python314
     ripgrep
     rsync
     sd
