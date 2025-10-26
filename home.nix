@@ -25,6 +25,7 @@
     fluxcd
     docker
     gh
+    ginkgo
     regal
     openssl
     cilium-cli
