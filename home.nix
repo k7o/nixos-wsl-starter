@@ -37,6 +37,7 @@
     # .NET development - use latest from unstable
     dotnetCorePackages.sdk_9_0-bin
     go
+    golangci-lint
     nodejs_24
   ];
 
