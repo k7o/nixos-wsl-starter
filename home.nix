@@ -8,6 +8,7 @@
     # cloud, k8s and CLI tools requested (from unstable)
     azure-cli
     azure-storage-azcopy
+    crane
     git
     istioctl
     k6
