@@ -76,6 +76,7 @@
     operator-sdk
     procs
     python314
+    ranger
     ripgrep
     rsync
     sd
