@@ -35,8 +35,13 @@
     step-cli
     trivy
     powershell
+    (with dotnetCorePackages; combinePackages [
+      sdk_10_0
+      runtime_9_0-bin
+      runtime_8_0-bin
+    ])
     # .NET development - use latest from unstable
-    dotnetCorePackages.sdk_10_0-bin
+    # dotnetCorePackages.sdk_10_0-bin
     go
     golangci-lint
     nodejs_24
