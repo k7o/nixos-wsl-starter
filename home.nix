@@ -55,7 +55,7 @@
     coreutils
     curl
     deadnix
-    du-dust
+    dust
     envsubst
     fd
     findutils
@@ -101,7 +101,7 @@ in {
     nix-index-database.homeModules.nix-index
   ];
 
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
 
   home = {
     username = "${username}";
@@ -172,19 +172,22 @@ in {
         hostname.style = "bold green";
       };
     };
-
-    git = {
+    delta = {
       enable = true;
-      package = pkgs.unstable.git;
-      delta.enable = true;
-      delta.options = {
+      options = {
         line-numbers = true;
         side-by-side = true;
         navigate = true;
       };
-      userEmail = "eric@example.com"; # FIXME: set your git email
-      userName = "eric"; #FIXME: set your git username
-      extraConfig = {
+    };
+    git = {
+      enable = true;
+      package = pkgs.unstable.git;
+      settings = {
+        user = {
+          email = "eric@example.com"; # FIXME: set your git email
+          name = "eric"; #FIXME: set your git username
+        };
         push = {
           default = "current";
           autoSetupRemote = true;
