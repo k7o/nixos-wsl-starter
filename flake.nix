@@ -25,7 +25,7 @@
 
   outputs = inputs:
     with inputs; let
-      nixpkgsWithOverlays = system: (import nixpkgs rec {
+      nixpkgsWithOverlays = system: (import nixpkgs {
         inherit system;
 
         config = {
@@ -38,8 +38,8 @@
         overlays = [
           (final: prev: {
             unstable = import nixpkgs-unstable {
-              inherit (prev) system;
-              inherit config;
+              system = prev.stdenv.hostPlatform.system;
+              config = prev.config;
             };
           })
         ];
