@@ -61,6 +61,7 @@
       trusted-users = [username];
       accept-flake-config = true;
       auto-optimise-store = true;
+      download-buffer-size = 1024; # MiB; bump to avoid buffer-full warnings
     };
 
     registry = {
