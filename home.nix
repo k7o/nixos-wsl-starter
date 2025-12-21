@@ -25,7 +25,6 @@
     open-policy-agent
     fluxcd
     docker
-    gh
     ginkgo
     regal
     openssl
@@ -198,6 +197,12 @@ in {
         diff = {
           colorMoved = "default";
         };
+      };      
+    };
+    gh = {
+      enable = true;
+      gitCredentialHelper = {
+        enable = true;
       };
     };
   };
