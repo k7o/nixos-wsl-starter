@@ -6,11 +6,14 @@
 }: let
   unstable-packages = with pkgs.unstable; [
     # cloud, k8s and CLI tools requested (from unstable)
+    aks-mcp-server
     azure-cli
     azure-storage-azcopy
     crane
+    fluxcd-operator-mcp
     git
     istioctl
+    hubble
     k6
     kubectl
     kubelogin
