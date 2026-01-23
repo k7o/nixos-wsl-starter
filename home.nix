@@ -121,6 +121,7 @@ in {
     ++ unstable-packages
     ++
     [
+      pkgs.copilot-cli
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];
