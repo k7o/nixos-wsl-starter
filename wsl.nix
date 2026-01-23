@@ -12,7 +12,6 @@
   environment.variables.PYTHONWARNINGS = "ignore::FutureWarning";
   environment.enableAllTerminfo = true;
   environment.pathsToLink = [ "/share/bash-completion" ];
-  environment.systemPackages = with pkgs; [ copilot-cli ];
   
   # Provide glibc-style dynamic loader behaviour for bundled native ELF binaries
   # (enables running glibc-linked executables that expect /lib64/ld-linux-x86-64.so.2)
