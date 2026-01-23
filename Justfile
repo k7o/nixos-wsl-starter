@@ -18,7 +18,8 @@ flake-update:
 
 # Update copilot versions.json to the latest upstream tarball (version + sha256)
 update-copilot-version:
-  version=$(curl -s 'https://registry.npmjs.org/@github/copilot' | jq -r '."dist-tags".latest // empty')
+  #!/usr/bin/env bash
+  version=$(curl -s 'https://registry.npmjs.org/@github/copilot' | jq -r '."dist-tags".latest')
   url="https://registry.npmjs.org/@github/copilot/-/copilot-${version}.tgz"
   hash=$(nix-prefetch-url --type sha256 "$url")
   hash_nix=$(nix hash convert --hash-algo sha256 $hash)

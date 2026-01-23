@@ -41,9 +41,11 @@
               system = prev.stdenv.hostPlatform.system;
               config = prev.config;
             };
-          })          (final: prev: {
+          })          
+          (final: prev: {
             copilot-cli = prev.callPackage ./overlays/copilot/package.nix {};
-          })        ];
+          })
+        ];
       });
 
       configurationDefaults = args: {
