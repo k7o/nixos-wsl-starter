@@ -26,6 +26,17 @@ update-copilot-version:
   printf '{\n  "version": "%s",\n  "sha256": "%s",\n  "npmDepsHash": ""\n}\n' "$version" "$hash_nix" > overlays/copilot/versions.json
   echo "Updated overlays/copilot/versions.json to $version (sha256: $hash_nix)."
 
+# Update flux9s versions.json to the latest upstream release (version + sha256)
+update-flux9s-version:
+  #!/usr/bin/env bash
+  latest_tag=$(curl -s https://api.github.com/repos/dgunzy/flux9s/releases/latest | jq -r .tag_name)
+  version=${latest_tag#v}
+  url="https://github.com/dgunzy/flux9s/releases/download/v${version}/flux9s-linux-x86_64-gnu.tar.gz"
+  hash=$(nix-prefetch-url --type sha256 "$url")
+  hash_nix=$(nix hash convert --hash-algo sha256 $hash)
+  printf '{\n  "version": "%s",\n  "sha256": "%s"\n}\n' "$version" "$hash_nix" > overlays/flux9s/versions.json
+  echo "Updated overlays/flux9s/versions.json to $version (sha256: $hash_nix)."
+
 # Update inputs then rebuild
 update-and-rebuild:
   just flake-update

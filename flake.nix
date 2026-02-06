@@ -45,6 +45,9 @@
           (final: prev: {
             copilot-cli = prev.callPackage ./overlays/copilot/package.nix {};
           })
+          (final: prev: {
+            flux9s = prev.callPackage ./overlays/flux9s/package.nix {};
+          })
         ];
       });
 

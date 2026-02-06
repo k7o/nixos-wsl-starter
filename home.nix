@@ -122,6 +122,7 @@ in {
     ++
     [
       pkgs.copilot-cli
+      pkgs.flux9s
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];
