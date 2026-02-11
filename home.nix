@@ -12,6 +12,7 @@
     crane
     fluxcd-operator-mcp
     git
+    gnupg
     istioctl
     hubble
     k6
