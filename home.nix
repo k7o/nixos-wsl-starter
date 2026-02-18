@@ -97,6 +97,7 @@
     unzip
     wget
     yamllint
+    yarn
     zip
   ];
 in {

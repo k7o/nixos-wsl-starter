@@ -8,6 +8,10 @@ default := "rebuild"
 rebuild:
   sudo nixos-rebuild switch --flake ~/configuration
 
+# Build and set as boot default without switching (use if switch fails)
+boot:
+  sudo nixos-rebuild boot --flake ~/configuration
+
 # Build the system derivation without switching
 build:
   sudo nixos-rebuild build --flake ~/configuration
