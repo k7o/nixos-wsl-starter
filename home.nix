@@ -6,6 +6,7 @@
 }: let
   unstable-packages = with pkgs.unstable; [
     # cloud, k8s and CLI tools requested (from unstable)
+    azure-cli
     azure-storage-azcopy
     crane
     fluxcd-operator-mcp
@@ -50,8 +51,7 @@
 
   stable-packages = with pkgs; [
     aks-mcp-server
-    alejandra
-    azure-cli
+    alejandra    
     bat
     bottom
     cacert
