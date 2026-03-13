@@ -51,7 +51,6 @@
 
   stable-packages = with pkgs; [
     aks-mcp-server
-    alejandra    
     bat
     bottom
     cacert

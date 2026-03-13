@@ -17,7 +17,7 @@
     };
 
     nix-index-database = {
-      url = "github:Mic92/nix-index-database";
+      url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -85,7 +85,6 @@
             ++ modules;
         };
     in {
-      defaultPackage.x86_64-linux = nixpkgs.legacyPackages.x86_64-linux.alejandra;
 
       nixosConfigurations.nixos = mkNixosConfiguration {
         hostname = "nixos";
