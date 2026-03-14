@@ -21,6 +21,7 @@
 
   users.users.${username} = {
     isNormalUser = true;
+    linger = true;
     shell = pkgs.bashInteractive;
     extraGroups = [
       "wheel"
@@ -28,6 +29,8 @@
       "docker"
     ];
   };
+
+  users.users.root.linger = true;
 
   home-manager.users.${username} = {
     imports = [
