@@ -46,14 +46,7 @@
       interop.appendWindowsPath = true;
       network.generateHosts = false;
     };
-    # Enable integration with Docker Desktop (needs to be installed)
     docker-desktop.enable = true;
-  };
-
-  virtualisation.docker = {
-    enable = true;
-    enableOnBoot = true;
-    autoPrune.enable = true;
   };
 
   nix = {
