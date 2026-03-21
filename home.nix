@@ -188,7 +188,13 @@ in {
     git = {
       enable = true;
       package = pkgs.unstable.git;
-      settings = {
+      extraConfig = {
+        credential = {
+          helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe";
+          "https://dev.azure.com" = {
+            useHttpPath = true;
+          };
+        };
         user = {
           email = "eric@example.com"; # FIXME: set your git email
           name = "eric"; #FIXME: set your git username
@@ -208,7 +214,7 @@ in {
     gh = {
       enable = true;
       gitCredentialHelper = {
-        enable = true;
+        enable = false;
       };
     };
   };
