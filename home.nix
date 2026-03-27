@@ -26,9 +26,9 @@
     kubebuilder
     kubectx
     open-policy-agent
+    python313Packages.pip
     fluxcd
-    docker
-    ginkgo
+    docker    
     regal
     openssl
     cilium-cli
@@ -63,6 +63,7 @@
     findutils
     fx
     gcc
+    ginkgo
     git-credential-manager
     git-crypt
     gnumake
@@ -188,7 +189,7 @@ in {
     git = {
       enable = true;
       package = pkgs.unstable.git;
-      extraConfig = {
+      settings = {
         credential = {
           helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe";
           "https://dev.azure.com" = {
