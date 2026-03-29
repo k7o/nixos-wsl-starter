@@ -74,6 +74,7 @@
     just
     jq
     killall
+    kubeconform
     mkcert
     mosh
     neovim
@@ -98,6 +99,7 @@
     wget
     yamllint
     yarn
+    yq-go
     zip
   ];
 in {
