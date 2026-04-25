@@ -73,3 +73,32 @@ Run `just` with no arguments to list available recipes.
 - `wsl.nix` — system-level and WSL-specific configuration
 - `home.nix` — Home Manager configuration for your user (packages, dotfiles,
   environment variables, aliases)
+
+## Managing Disk Space
+
+NixOS keeps old generations of your configuration, and WSL2 uses a Virtual Hard Disk (`.vhdx`) that expands dynamically but does not shrink automatically. Over time, you may notice a significant loss of host disk space.
+
+To reclaim this space, perform these two steps:
+
+**1. Clean up the Nix Store (Inside WSL)**
+Remove old, unreferenced generations using the included Justfile recipe:
+```bash
+just gc
+```
+
+**2. Compact the WSL Virtual Disk (On Windows)**
+To return the freed space to your Windows host, you must compact the `.vhdx` file.
+1. Open PowerShell as **Administrator**.
+2. Shut down WSL completely:
+   ```powershell
+   wsl --shutdown
+   ```
+3. Use `diskpart` to select and compact your NixOS vhdx file (typically located at `C:\Users\<YourUser>\AppData\Local\Packages\<NixOS_Package_Name>\LocalState\ext4.vhdx`):
+   ```powershell
+   diskpart
+   # In the diskpart prompt:
+   select vdisk file="C:\Users\<YourUser>\AppData\Local\Packages\<NixOS_Package_Name>\LocalState\ext4.vhdx"
+   compact vdisk
+   exit
+   ```
+   *(Note: If Hyper-V is enabled, you can also use `Optimize-VHD -Path "C:\..." -Mode Full` instead of diskpart.)*

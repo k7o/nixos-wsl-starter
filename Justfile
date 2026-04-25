@@ -4,8 +4,11 @@ set shell := ['bash', '-lc']
 # Default task
 default := "rebuild"
 
+# Update all overlay versions
+update-all-overlays: update-copilot-version update-flux9s-version update-azure-workload-identity-version
+
 # Apply the system configuration from ~/configuration
-rebuild:
+rebuild: update-all-overlays
   sudo nixos-rebuild switch --flake ~/configuration
 
 # Build and set as boot default without switching (use if switch fails)
@@ -40,6 +43,17 @@ update-flux9s-version:
   hash_nix=$(nix hash convert --hash-algo sha256 $hash)
   printf '{\n  "version": "%s",\n  "sha256": "%s"\n}\n' "$version" "$hash_nix" > overlays/flux9s/versions.json
   echo "Updated overlays/flux9s/versions.json to $version (sha256: $hash_nix)."
+
+# Update azure-workload-identity versions.json to the latest upstream release (version + sha256)
+update-azure-workload-identity-version:
+  #!/usr/bin/env bash
+  latest_tag=$(curl -s https://api.github.com/repos/Azure/azure-workload-identity/releases/latest | jq -r .tag_name)
+  version=${latest_tag#v}
+  url="https://github.com/Azure/azure-workload-identity/releases/download/${latest_tag}/azwi-${latest_tag}-linux-amd64.tar.gz"
+  hash=$(nix-prefetch-url --type sha256 "$url")
+  hash_nix=$(nix hash convert --hash-algo sha256 $hash)
+  printf '{\n  "version": "%s",\n  "sha256": "%s"\n}\n' "$version" "$hash_nix" > overlays/azure-workload-identity/versions.json
+  echo "Updated overlays/azure-workload-identity/versions.json to $version (sha256: $hash_nix)."
 
 # Update inputs then rebuild
 update-and-rebuild:

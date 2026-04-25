@@ -66,6 +66,7 @@
     ginkgo
     git-credential-manager
     git-crypt
+    git-filter-repo
     gnumake
     gnutar
     hostname-debian
@@ -127,6 +128,7 @@ in {
     [
       pkgs.copilot-cli
       pkgs.flux9s
+      pkgs.azure-workload-identity
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];

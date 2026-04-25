@@ -48,6 +48,9 @@
           (final: prev: {
             flux9s = prev.callPackage ./overlays/flux9s/package.nix {};
           })
+          (final: prev: {
+            azure-workload-identity = prev.callPackage ./overlays/azure-workload-identity/package.nix {};
+          })
         ];
       });
 
