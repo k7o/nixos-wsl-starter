@@ -93,7 +93,8 @@ To return the freed space to your Windows host, you must compact the `.vhdx` fil
    ```powershell
    wsl --shutdown
    ```
-3. Use `diskpart` to select and compact your NixOS vhdx file (typically located at `C:\Users\<YourUser>\AppData\Local\Packages\<NixOS_Package_Name>\LocalState\ext4.vhdx`):
+3. Use `diskpart` to select and compact your NixOS vhdx file (search for the file by executing `Get-ChildItem HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss | ForEach-Object { Get-ItemProperty $_.PSPath } | Select-Object DistributionName, BasePath
+` , then find the entry for your NixOS distribution):
    ```powershell
    diskpart
    # In the diskpart prompt:
