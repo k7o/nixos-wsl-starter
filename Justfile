@@ -4,56 +4,29 @@ set shell := ['bash', '-lc']
 # Default task
 default := "rebuild"
 
-# Update all overlay versions
-update-all-overlays: update-copilot-version update-flux9s-version update-azure-workload-identity-version
+# Update one overlay version from the shared manifest
+update-overlay name:
+  bash ./scripts/update-overlay.sh {{name}}
+
+# Update all overlay versions from the shared manifest
+update-all-overlays:
+  bash ./scripts/update-overlay.sh --all
 
 # Apply the system configuration from ~/configuration
 rebuild: update-all-overlays
-  sudo nixos-rebuild switch --flake ~/configuration
+  sudo nixos-rebuild switch --flake "path:$PWD"
 
 # Build and set as boot default without switching (use if switch fails)
 boot:
-  sudo nixos-rebuild boot --flake ~/configuration
+  sudo nixos-rebuild boot --flake "path:$PWD"
 
 # Build the system derivation without switching
 build:
-  sudo nixos-rebuild build --flake ~/configuration
+  sudo nixos-rebuild build --flake "path:$PWD"
 
 # Update flake inputs (recreate lock file)
 flake-update:
   nix flake update
-
-# Update copilot versions.json to the latest upstream tarball (version + sha256)
-update-copilot-version:
-  #!/usr/bin/env bash
-  version=$(curl -s 'https://registry.npmjs.org/@github/copilot' | jq -r '."dist-tags".latest')
-  url="https://registry.npmjs.org/@github/copilot/-/copilot-${version}.tgz"
-  hash=$(nix-prefetch-url --type sha256 "$url")
-  hash_nix=$(nix hash convert --hash-algo sha256 $hash)
-  printf '{\n  "version": "%s",\n  "sha256": "%s",\n  "npmDepsHash": ""\n}\n' "$version" "$hash_nix" > overlays/copilot/versions.json
-  echo "Updated overlays/copilot/versions.json to $version (sha256: $hash_nix)."
-
-# Update flux9s versions.json to the latest upstream release (version + sha256)
-update-flux9s-version:
-  #!/usr/bin/env bash
-  latest_tag=$(curl -s https://api.github.com/repos/dgunzy/flux9s/releases/latest | jq -r .tag_name)
-  version=${latest_tag#v}
-  url="https://github.com/dgunzy/flux9s/releases/download/v${version}/flux9s-linux-x86_64-gnu.tar.gz"
-  hash=$(nix-prefetch-url --type sha256 "$url")
-  hash_nix=$(nix hash convert --hash-algo sha256 $hash)
-  printf '{\n  "version": "%s",\n  "sha256": "%s"\n}\n' "$version" "$hash_nix" > overlays/flux9s/versions.json
-  echo "Updated overlays/flux9s/versions.json to $version (sha256: $hash_nix)."
-
-# Update azure-workload-identity versions.json to the latest upstream release (version + sha256)
-update-azure-workload-identity-version:
-  #!/usr/bin/env bash
-  latest_tag=$(curl -s https://api.github.com/repos/Azure/azure-workload-identity/releases/latest | jq -r .tag_name)
-  version=${latest_tag#v}
-  url="https://github.com/Azure/azure-workload-identity/releases/download/${latest_tag}/azwi-${latest_tag}-linux-amd64.tar.gz"
-  hash=$(nix-prefetch-url --type sha256 "$url")
-  hash_nix=$(nix hash convert --hash-algo sha256 $hash)
-  printf '{\n  "version": "%s",\n  "sha256": "%s"\n}\n' "$version" "$hash_nix" > overlays/azure-workload-identity/versions.json
-  echo "Updated overlays/azure-workload-identity/versions.json to $version (sha256: $hash_nix)."
 
 # Update inputs then rebuild
 update-and-rebuild:
@@ -70,4 +43,4 @@ verify-store:
 
 # Show flake information in JSON
 flake-info:
-  nix flake show --json
+  nix flake show --json "path:$PWD"

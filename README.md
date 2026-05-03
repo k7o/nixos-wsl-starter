@@ -58,6 +58,32 @@ This repository includes a minimal `Justfile` with a few Nix-focused recipes. It
 
 Run `just` with no arguments to list available recipes.
 
+## Adding a custom overlay
+
+Custom packaged tools in this repository are managed through the shared manifest at `overlays/registry.json`.
+
+When adding a new overlay:
+
+1. Create `overlays/<name>/package.nix`.
+2. Create `overlays/<name>/versions.json`.
+3. Add one entry to `overlays/registry.json` with:
+  - `attribute`: the package name exposed through the overlay
+  - `directory`: the overlay folder name under `overlays/`
+  - `updater`: metadata used by `scripts/update-overlay.sh`
+4. Rebuild or evaluate the flake to confirm `flake.nix` can still derive overlays from the manifest.
+
+The generic updater reads `overlays/registry.json` and writes the matching `versions.json` file:
+
+- `just update-overlay <name>` updates one overlay by directory or attribute name
+- `just update-all-overlays` updates every overlay listed in the manifest
+
+Current updater types:
+
+- `npm`: provide `package`, and optionally `extraVersionFields`
+- `github-release`: provide `repo`, optional `stripPrefix`, and `assetUrlTemplate`
+
+Examples live in `overlays/registry.json`, and the updater implementation is in `scripts/update-overlay.sh`.
+
 ## Defaults in this template
 
 - Editor: Neovim (`neovim` is included in `unstable-packages`) — set the

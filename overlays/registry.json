@@ -1,0 +1,46 @@
+{
+  "overlays": [
+    {
+      "attribute": "copilot-cli",
+      "directory": "copilot",
+      "updater": {
+        "type": "npm",
+        "package": "@github/copilot",
+        "extraVersionFields": {
+          "npmDepsHash": ""
+        }
+      }
+    },
+    {
+      "attribute": "flux9s",
+      "directory": "flux9s",
+      "updater": {
+        "type": "github-release",
+        "repo": "dgunzy/flux9s",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/dgunzy/flux9s/releases/download/${tag}/flux9s-linux-x86_64-gnu.tar.gz"
+      }
+    },
+    {
+      "attribute": "azure-workload-identity",
+      "directory": "azure-workload-identity",
+      "updater": {
+        "type": "github-release",
+        "repo": "Azure/azure-workload-identity",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/Azure/azure-workload-identity/releases/download/${tag}/azwi-${tag}-linux-amd64.tar.gz"
+      }
+    },
+    {
+      "attribute": "pi",
+      "directory": "pi",
+      "updater": {
+        "type": "npm",
+        "package": "@mariozechner/pi-coding-agent",
+        "extraVersionFields": {
+          "npmDepsHash": ""
+        }
+      }
+    }
+  ]
+}

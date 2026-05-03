@@ -25,6 +25,21 @@
 
   outputs = inputs:
     with inputs; let
+      overlayRegistry = builtins.fromJSON (builtins.readFile ./overlays/registry.json);
+
+      customOverlayModules = builtins.map (
+        overlay: final: prev:
+          let
+            packagePath = ./. + "/overlays/${overlay.directory}/package.nix";
+          in
+            builtins.listToAttrs [
+              {
+                name = overlay.attribute;
+                value = prev.callPackage packagePath {};
+              }
+            ]
+      ) overlayRegistry.overlays;
+
       nixpkgsWithOverlays = system: (import nixpkgs {
         inherit system;
 
@@ -41,17 +56,8 @@
               system = prev.stdenv.hostPlatform.system;
               config = prev.config;
             };
-          })          
-          (final: prev: {
-            copilot-cli = prev.callPackage ./overlays/copilot/package.nix {};
           })
-          (final: prev: {
-            flux9s = prev.callPackage ./overlays/flux9s/package.nix {};
-          })
-          (final: prev: {
-            azure-workload-identity = prev.callPackage ./overlays/azure-workload-identity/package.nix {};
-          })
-        ];
+        ] ++ customOverlayModules;
       });
 
       configurationDefaults = args: {

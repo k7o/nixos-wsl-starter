@@ -1,0 +1,10 @@
+{
+  "attribute": "name",
+  "directory": "name",
+  "updater": {
+    "type": "github-release",
+    "repo": "owner/name",
+    "stripPrefix": "v",
+    "assetUrlTemplate": "https://github.com/owner/name/releases/download/${tag}/name-${version}-linux-amd64.tar.gz"
+  }
+}

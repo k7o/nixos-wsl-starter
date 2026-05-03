@@ -129,6 +129,7 @@ in {
       pkgs.copilot-cli
       pkgs.flux9s
       pkgs.azure-workload-identity
+      pkgs.pi
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];
