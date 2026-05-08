@@ -21,7 +21,6 @@
     kubernetes-helm
     kustomize
     kind
-    k3d
     k9s
     kube-bench
     kubebuilder
@@ -75,6 +74,7 @@
     httpie
     just
     jq
+    k3d
     killall
     kubeconform
     mkcert
