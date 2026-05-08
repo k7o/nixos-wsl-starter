@@ -36,7 +36,7 @@
       "directory": "pi",
       "updater": {
         "type": "npm",
-        "package": "@mariozechner/pi-coding-agent",
+        "package": "@earendil-works/pi-coding-agent",
         "extraVersionFields": {
           "npmDepsHash": ""
         }

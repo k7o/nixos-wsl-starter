@@ -1,21 +1,21 @@
-{ buildNpmPackage, fetchurl, nodejs, makeWrapper, lib, cacert }:
+{ buildNpmPackage, fetchurl, nodejs, makeWrapper, lib, cacert, python3 }:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
-  pname = "pi";
+  pname = "context-mode";
   version = versions.version;
 in
 buildNpmPackage rec {
   inherit pname version;
 
   src = fetchurl {
-    url = "https://registry.npmjs.org/@earendil-works/pi-coding-agent/-/pi-coding-agent-${version}.tgz";
+    url = "https://registry.npmjs.org/context-mode/-/context-mode-${version}.tgz";
     sha256 = versions.sha256;
   };
 
   npmDepsHash = versions.npmDepsHash;
   sourceRoot = "package";
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper python3 ];
 
   postPatch = ''
     cp ${./package-lock.json} package-lock.json
@@ -26,11 +26,11 @@ buildNpmPackage rec {
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/lib/node_modules/@earendil-works/pi-coding-agent
-    cp -r . $out/lib/node_modules/@earendil-works/pi-coding-agent
+    mkdir -p $out/lib/node_modules/context-mode
+    cp -r . $out/lib/node_modules/context-mode
     mkdir -p $out/bin
-    makeWrapper ${nodejs}/bin/node $out/bin/pi \
-      --add-flags "$out/lib/node_modules/@earendil-works/pi-coding-agent/dist/cli.js" \
+    makeWrapper ${nodejs}/bin/node $out/bin/context-mode \
+      --add-flags "$out/lib/node_modules/context-mode/cli.bundle.mjs" \
       --set SSL_CERT_DIR "${cacert}/etc/ssl/certs" \
       --set SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt" \
       --set NODE_EXTRA_CA_CERTS "${cacert}/etc/ssl/certs/ca-bundle.crt"
@@ -38,11 +38,11 @@ buildNpmPackage rec {
   '';
 
   meta = {
-    description = "pi AI coding assistant CLI";
-    homepage = "https://github.com/earendil-works/pi-mono";
-    license = lib.licenses.mit;
+    description = "Context window optimization for AI coding agents";
+    homepage = "https://github.com/mksglu/context-mode";
+    license = lib.licenses.elastic20;
     platforms = [ "x86_64-linux" ];
     maintainers = with lib.maintainers; [ ];
-    mainProgram = "pi";
+    mainProgram = "context-mode";
   };
 }

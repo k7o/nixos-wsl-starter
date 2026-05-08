@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   username,
   nix-index-database,
   ...
