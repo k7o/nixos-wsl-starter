@@ -9,6 +9,7 @@
     # cloud, k8s and CLI tools requested (from unstable)
     azure-cli
     azure-storage-azcopy
+    bun
     crane
     fluxcd-operator-mcp
     git
@@ -215,6 +216,9 @@ in {
         };
         diff = {
           colorMoved = "default";
+        };
+        init = {
+          defaultBranch = "main";
         };
       };      
     };
