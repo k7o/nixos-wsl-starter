@@ -32,6 +32,16 @@
       }
     },
     {
+      "attribute": "archon",
+      "directory": "archon",
+      "updater": {
+        "type": "github-release",
+        "repo": "coleam00/Archon",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/coleam00/Archon/releases/download/${tag}/archon-linux-x64"
+      }
+    },
+    {
       "attribute": "pi",
       "directory": "pi",
       "updater": {

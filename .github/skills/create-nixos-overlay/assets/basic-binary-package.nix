@@ -12,6 +12,13 @@ stdenv.mkDerivation rec {
     sha256 = versions.sha256;
   };
 
+  # If the fetched source is already the final executable, replace `sourceRoot`
+  # with `unpackPhase = ''true'';` and install `$src` directly.
+  # Keep this enabled for Bun-compiled single-file executables.
+  # Nix stripping removes the embedded program payload and leaves Bun help.
+  # Remove it only when the upstream binary does not rely on that layout.
+  dontStrip = true;
+
   sourceRoot = ".";
 
   installPhase = ''

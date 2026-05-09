@@ -2,7 +2,8 @@
 set shell := ['bash', '-lc']
 
 # Default task
-default := "rebuild"
+default:
+  just rebuild
 
 # Update one overlay version from the shared manifest
 update-overlay name:
@@ -13,7 +14,7 @@ update-all-overlays:
   bash ./scripts/update-overlay.sh --all
 
 # Apply the system configuration from ~/configuration
-rebuild: update-all-overlays
+rebuild:
   sudo nixos-rebuild switch --flake "path:$PWD"
 
 # Build and set as boot default without switching (use if switch fails)
@@ -29,7 +30,7 @@ flake-update:
   nix flake update
 
 # Update inputs then rebuild
-update-and-rebuild:
+update-and-rebuild: update-all-overlays
   just flake-update
   just rebuild
 

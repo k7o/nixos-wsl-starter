@@ -132,6 +132,7 @@ in {
       pkgs.flux9s
       pkgs.azure-workload-identity
       pkgs.pi
+      pkgs.archon
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];
