@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, lib }:
+{ stdenv, fetchurl, lib, makeWrapper, cacert }:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
   pname = "archon";
@@ -6,6 +6,8 @@ let
 in
 stdenv.mkDerivation rec {
   inherit pname version;
+
+  nativeBuildInputs = [ makeWrapper ];
 
   # Upstream distributes a Bun-compiled single-file executable. Bun runtime
   # strings inside the ELF are expected and do not indicate the wrong asset was
@@ -23,7 +25,16 @@ stdenv.mkDerivation rec {
   dontStrip = true;
 
   installPhase = ''
-    install -m755 -D "$src" $out/bin/archon
+    install -m755 -D "$src" $out/libexec/archon
+    makeWrapper $out/libexec/archon $out/bin/archon \
+      --run 'export NPM_CONFIG_PREFIX="''${XDG_DATA_HOME:-$HOME/.local/share}/npm"' \
+      --run 'export npm_config_prefix="$NPM_CONFIG_PREFIX"' \
+      --run 'export NPM_CONFIG_CACHE="''${XDG_CACHE_HOME:-$HOME/.cache}/npm"' \
+      --run 'mkdir -p "$NPM_CONFIG_PREFIX" "$NPM_CONFIG_CACHE" "$NPM_CONFIG_PREFIX/bin"' \
+      --run 'export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"' \
+      --set SSL_CERT_DIR "${cacert}/etc/ssl/certs" \
+      --set SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt" \
+      --set NODE_EXTRA_CA_CERTS "${cacert}/etc/ssl/certs/ca-bundle.crt"
   '';
 
   meta = {
