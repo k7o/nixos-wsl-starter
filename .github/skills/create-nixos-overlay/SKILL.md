@@ -41,6 +41,7 @@ If any of those are missing, ask only for the missing values.
   - Set `unpackPhase = ''true'';` when the fetched source is already the final executable and should be installed directly from `$src`.
    - Use `sourceRoot = ".";` when the archive extracts into the working directory.
   - Set `dontStrip = true;` for Bun-compiled single-file executables so the embedded program payload is preserved.
+  - For npm-based CLIs, always wrap the executable with a writable `NPM_CONFIG_PREFIX` and `NPM_CONFIG_CACHE` under the user's home directories so runtime installs or self-updates never target `/nix/store/.../lib`.
    - Add `autoPatchelfHook`, `openssl`, `nodejs`, `makeWrapper`, or other inputs only when the artifact actually needs them.
 5. Add one entry to `overlays/registry.json` with the overlay attribute, directory, updater type, and updater-specific metadata.
 6. Keep the generic updater command in `Justfile` and extend manifest metadata only when the new overlay needs more information:
@@ -60,7 +61,7 @@ If any of those are missing, ask only for the missing values.
 - npm package tarball:
   - Pull the latest version from the npm registry.
   - Fetch the tarball URL for that version.
-  - Add wrapper logic if the package is executed via `node`.
+  - If the package is executed via `node`, add wrapper logic that exports a writable `NPM_CONFIG_PREFIX`, `npm_config_prefix`, and `NPM_CONFIG_CACHE`, creates those directories, and prepends the prefix `bin` directory to `PATH`.
 - Other direct download:
   - Use the upstream endpoint that returns a stable latest version or explicit version metadata.
   - Store only the fields needed to reproduce the fetch.
@@ -70,7 +71,7 @@ If any of those are missing, ask only for the missing values.
 - Raw single-file binary: set `unpackPhase = ''true'';` and install `$src` directly with `install -m755 -D "$src" $out/bin/<name>`.
 - Single extracted binary: install with `install -m755 -D binary $out/bin/<name>`.
 - Bun-compiled single-file executable: treat it like a prebuilt binary and add `dontStrip = true;`.
-- Node CLI tarball: copy into `$out/lib/node_modules/...` and wrap the entry point.
+- Node CLI tarball: copy into `$out/lib/node_modules/...`, wrap the entry point, and always export a writable npm prefix/cache so npm never resolves global installs into `/nix/store/.../lib`.
 - Dynamically linked binary: add `autoPatchelfHook` and runtime libraries only when required.
 
 ### Better Way?

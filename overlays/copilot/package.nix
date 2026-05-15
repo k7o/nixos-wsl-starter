@@ -23,6 +23,11 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin
     makeWrapper ${nodejs}/bin/node $out/bin/copilot \
       --add-flags "$out/lib/node_modules/@github/copilot/index.js" \
+      --run 'export NPM_CONFIG_PREFIX="''${XDG_DATA_HOME:-$HOME/.local/share}/npm"' \
+      --run 'export npm_config_prefix="$NPM_CONFIG_PREFIX"' \
+      --run 'export NPM_CONFIG_CACHE="''${XDG_CACHE_HOME:-$HOME/.cache}/npm"' \
+      --run 'mkdir -p "$NPM_CONFIG_PREFIX" "$NPM_CONFIG_CACHE" "$NPM_CONFIG_PREFIX/bin"' \
+      --run 'export PATH="$NPM_CONFIG_PREFIX/bin:$PATH"' \
       --set SSL_CERT_DIR "${cacert}/etc/ssl/certs" \
       --set SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt" \
       --set NODE_EXTRA_CA_CERTS "${cacert}/etc/ssl/certs/ca-bundle.crt"

@@ -18,4 +18,5 @@ Interpretation guidance:
 
 - Match the nearest existing example instead of inventing a new packaging style.
 - Keep naming consistent across `directory`, `attribute`, and the selector passed to `just update-overlay <name>`.
+- npm-based CLIs must export a writable `NPM_CONFIG_PREFIX`, `npm_config_prefix`, and `NPM_CONFIG_CACHE` in their wrapper so npm never attempts a global install into `/nix/store/.../lib`.
 - Prefer a minimal derivation and minimal manifest metadata; only extend `scripts/update-overlay.sh` when the upstream artifact requires it.
