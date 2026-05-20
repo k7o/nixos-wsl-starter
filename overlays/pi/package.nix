@@ -18,6 +18,7 @@ buildNpmPackage rec {
   nativeBuildInputs = [ makeWrapper ];
 
   postPatch = ''
+    rm -f npm-shrinkwrap.json
     cp ${./package-lock.json} package-lock.json
   '';
 

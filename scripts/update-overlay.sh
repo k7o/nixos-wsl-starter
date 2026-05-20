@@ -53,7 +53,14 @@ compute_npm_deps_hash() {
 
   (
     cd "$tmpdir/package"
+    if [[ -f npm-shrinkwrap.json ]]; then
+      mv npm-shrinkwrap.json npm-shrinkwrap.json.upstream
+    fi
     npm install --package-lock-only --ignore-scripts --legacy-peer-deps >/dev/null
+    if [[ ! -f package-lock.json ]]; then
+      echo "Failed to generate package-lock.json for $tarball_url" >&2
+      exit 1
+    fi
     cp package-lock.json "$output_lockfile_abs"
     nix shell nixpkgs#prefetch-npm-deps.out -c prefetch-npm-deps package-lock.json
   )
