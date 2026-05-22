@@ -29,7 +29,7 @@
     open-policy-agent
     python313Packages.pip
     fluxcd
-    docker    
+    docker
     regal
     openssl
     cilium-cli
