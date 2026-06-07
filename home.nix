@@ -82,9 +82,9 @@
     mosh
     neovim
     nil
-    nodePackages.prettier
-    nodePackages.vscode-langservers-extracted # html, css, json, eslint
-    nodePackages.yaml-language-server
+    prettier
+    vscode-langservers-extracted # html, css, json, eslint
+    yaml-language-server
     operator-sdk
     procs
     python314
@@ -110,7 +110,7 @@ in {
     nix-index-database.homeModules.nix-index
   ];
 
-  home.stateVersion = "25.11";
+  home.stateVersion = "26.05";
 
   home = {
     username = "${username}";
