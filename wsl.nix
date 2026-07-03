@@ -50,6 +50,10 @@
       network.generateHosts = false;
     };
     docker-desktop.enable = true;
+    extraBin = [
+      { src = "${pkgs.coreutils}/bin/install"; }
+      { src = "${pkgs.coreutils}/bin/mv"; }
+    ];
   };
 
   nix = {

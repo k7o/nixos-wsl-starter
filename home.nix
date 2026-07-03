@@ -59,7 +59,9 @@
     curl
     deadnix
     dust
+    e2fsprogs
     envsubst
+    erofs-utils    
     fd
     findutils
     fx
@@ -68,8 +70,9 @@
     git-credential-manager
     git-crypt
     git-filter-repo
+    gnome-keyring
     gnumake
-    gnutar
+    gnutar    
     hostname-debian
     htop
     httpie
@@ -78,6 +81,7 @@
     k3d
     killall
     kubeconform
+    libsecret
     mkcert
     mosh
     neovim
@@ -131,11 +135,18 @@ in {
       pkgs.copilot-cli
       pkgs.flux9s
       pkgs.azure-workload-identity
-      pkgs.pi
-      pkgs.archon
+      pkgs.sbx
+      # pkgs.pi
+      # pkgs.archon
       # pkgs.some-package
       # pkgs.unstable.some-other-package
     ];
+
+  # Auto-start gnome-keyring secret service
+  services.gnome-keyring = {
+    enable = true;
+    components = [ "secrets" ];
+  };
 
   programs = {
     home-manager.enable = true;

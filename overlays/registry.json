@@ -51,6 +51,16 @@
           "npmDepsHash": ""
         }
       }
+    },
+    {
+      "attribute": "sbx",
+      "directory": "sbx",
+      "updater": {
+        "type": "github-release",
+        "repo": "docker/sbx-releases",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/docker/sbx-releases/releases/download/${tag}/DockerSandboxes-linux-amd64.tar.gz"
+      }
     }
   ]
 }
