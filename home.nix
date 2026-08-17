@@ -135,7 +135,7 @@ in {
       pkgs.copilot-cli
       pkgs.flux9s
       pkgs.azure-workload-identity
-      pkgs.sbx
+      # pkgs.sbx
       # pkgs.pi
       # pkgs.archon
       # pkgs.some-package
