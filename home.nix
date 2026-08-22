@@ -98,6 +98,7 @@
     sd
     shellcheck
     shfmt
+    socat
     statix
     stern
     tmux
