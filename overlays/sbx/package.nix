@@ -1,4 +1,4 @@
-{ stdenv, fetchurl, lib, autoPatchelfHook, lz4, zlib, zstd, xxhash }:
+{ stdenv, fetchurl, lib, autoPatchelfHook, makeWrapper, e2fsprogs, lz4, zlib, zstd, xxhash }:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
   pname = "docker-sbx";
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     sha256 = versions.sha256;
   };
 
-  nativeBuildInputs = [ autoPatchelfHook ];
+  nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
 
   buildInputs = [
     lz4
@@ -31,15 +31,30 @@ stdenv.mkDerivation rec {
 
     install -m 755 sbx $out/bin/sbx
 
-    for f in containerd-shim-nerdbox-v1; do
+    # shim + rootfs tooling
+    for f in containerd-shim-nerdbox-v1 mkfs.erofs; do
       install -m 755 "$f" $out/libexec/
     done
 
-    for f in nerdbox-kernel-* nerdbox-initrd-*; do
+    # GPU trampoline shim (amd64 only)
+    [ -f containerd-shim-nerdbox-gpu-v1 ] && \
+      install -m 755 containerd-shim-nerdbox-gpu-v1 $out/libexec/
+
+    # kernel + rootfs — this is the line that was missing.
+    # It must be "nerdbox-rootfs-*.erofs", NOT "nerdbox-initrd-*".
+    for f in nerdbox-kernel-* nerdbox-rootfs-*.erofs; do
       [ -f "$f" ] && install -m 644 "$f" $out/libexec/
     done
 
     install -m 755 libsailor.so $out/libexec/lib/libsailor.so
+
+    # Self-contained at runtime:
+    #  - shim finds rootfs/kernel/mkfs.erofs via SAILOR_PATH and PATH
+    #  - daemon finds mkfs.ext4 (e2fsprogs) via PATH
+    wrapProgram $out/bin/sbx \
+      --prefix PATH : $out/libexec \
+      --prefix PATH : ${e2fsprogs}/bin \
+      --set SAILOR_PATH $out/libexec
 
     runHook postInstall
   '';

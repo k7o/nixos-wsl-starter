@@ -11,10 +11,12 @@
     azure-storage-azcopy
     bun
     crane
+    docker-sbx
     fluxcd-operator-mcp
     git
     gnupg
     istioctl
+    herdr
     hubble
     k6
     kubectl
