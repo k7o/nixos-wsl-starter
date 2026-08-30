@@ -64,6 +64,7 @@
     e2fsprogs
     envsubst
     erofs-utils    
+    eza
     fd
     findutils
     fx
@@ -107,6 +108,7 @@
     tree
     unzip
     wget
+    wl-clipboard
     yamllint
     yarn
     yq-go
@@ -179,8 +181,12 @@ in {
         pbpaste = "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe -command \"Get-Clipboard\"";
         explorer = "/mnt/c/Windows/explorer.exe";
         k = "kubectl";
+        agent = "just -d \"$(pwd)\" -f ~/.sbx-justfile";
+        ls = "eza -lh --group-directories-first --icons=auto";
+        lsa = "ls -a";
+        lt = "eza --tree --level=2 --long --icons --git";
+        lta = "lt -a";
       };
-      
     };
 
     starship = {
