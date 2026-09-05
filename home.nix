@@ -110,6 +110,17 @@
     yq-go
     zip
   ];
+
+  custom-packages = with pkgs; [
+    copilot-cli
+    flux9s
+    azure-workload-identity
+    sbx
+    pi
+    # archon
+    # some-package
+  ];
+
 in {
   imports = [
     nix-index-database.homeModules.nix-index
@@ -130,17 +141,7 @@ in {
   home.packages =
     stable-packages
     ++ unstable-packages
-    ++
-    [
-      pkgs.copilot-cli
-      pkgs.flux9s
-      pkgs.azure-workload-identity
-      pkgs.sbx
-      pkgs.pi
-      # pkgs.archon
-      # pkgs.some-package
-      # pkgs.unstable.some-other-package
-    ];
+    ++ custom-packages;
 
   # Auto-start gnome-keyring secret service
   services.gnome-keyring = {
