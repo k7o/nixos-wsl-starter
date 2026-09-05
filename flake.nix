@@ -27,13 +27,19 @@
     with inputs; let
       overlayRegistry = builtins.fromJSON (builtins.readFile ./overlays/registry.json);
 
-      # Each registry entry becomes a one-attribute overlay exposing
-      # pkgs.<attribute> built from overlays/<directory>/package.nix.
-      customOverlays = builtins.map (
-        overlay: final: prev: {
-          ${overlay.attribute} = prev.callPackage (./. + "/overlays/${overlay.directory}/package.nix") {};
-        }
-      ) overlayRegistry.overlays;
+      # Custom packages from overlays/registry.json, exposed under a single
+      # pkgs.custom.<attribute> namespace (like pkgs.unstable) so a package
+      # name can never shadow an identically named nixpkgs attribute.
+      customOverlay = final: prev: {
+        custom = builtins.listToAttrs (
+          builtins.map (
+            overlay: {
+              name = overlay.attribute;
+              value = final.callPackage (./. + "/overlays/${overlay.directory}/package.nix") {};
+            }
+          ) overlayRegistry.overlays
+        );
+      };
 
       nixpkgsWithOverlays = system: (import nixpkgs {
         inherit system;
@@ -52,9 +58,10 @@
               config = prev.config;
             };
           })
-          # Note: customOverlays applies to the stable set only; pkgs.unstable
-          # intentionally does not expose the custom attributes.
-        ] ++ customOverlays;
+          # Note: pkgs.unstable intentionally does not get customOverlay, so
+          # pkgs.unstable.custom does not exist.
+          customOverlay
+        ];
       });
 
       configurationDefaults = args: {

@@ -5,6 +5,16 @@
   nix-index-database,
   ...
 }: let
+  custom-packages = with pkgs.custom; [
+    copilot-cli
+    flux9s
+    azure-workload-identity
+    sbx
+    pi
+    # archon
+    # some-package
+  ];
+    
   unstable-packages = with pkgs.unstable; [
     # cloud, k8s and CLI tools requested (from unstable)
     azure-cli
@@ -111,15 +121,6 @@
     zip
   ];
 
-  custom-packages = with pkgs; [
-    copilot-cli
-    flux9s
-    azure-workload-identity
-    sbx
-    pi
-    # archon
-    # some-package
-  ];
 
 in {
   imports = [
