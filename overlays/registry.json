@@ -4,11 +4,10 @@
       "attribute": "copilot-cli",
       "directory": "copilot",
       "updater": {
-        "type": "npm",
-        "package": "@github/copilot",
-        "extraVersionFields": {
-          "npmDepsHash": ""
-        }
+        "type": "github-release",
+        "repo": "github/copilot-cli",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/github/copilot-cli/releases/download/${tag}/github-copilot-${version}-linux-x64.tgz"
       }
     },
     {
@@ -45,11 +44,10 @@
       "attribute": "pi",
       "directory": "pi",
       "updater": {
-        "type": "npm",
-        "package": "@earendil-works/pi-coding-agent",
-        "extraVersionFields": {
-          "npmDepsHash": ""
-        }
+        "type": "github-release",
+        "repo": "earendil-works/pi",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/earendil-works/pi/releases/download/${tag}/pi-linux-x64.tar.gz"
       }
     },
     {

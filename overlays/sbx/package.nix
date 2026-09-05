@@ -1,69 +1,96 @@
-{ stdenv, fetchurl, lib, autoPatchelfHook, makeWrapper, e2fsprogs, lz4, zlib, zstd, xxhash }:
+# Recipe adopted from nixpkgs (pkgs/by-name/do/docker-sbx), with the version
+# wired to versions.json so `just update-overlay sbx` keeps bumping it without
+# waiting on nixpkgs. Linux-only for now: the updater tracks a single asset
+# (DockerSandboxes-linux-amd64.tar.gz).
+{
+  lib,
+  fetchurl,
+  stdenvNoCC,
+  installShellFiles,
+  autoPatchelfHook,
+  makeWrapper,
+  gccForLibs,
+  e2fsprogs,
+  lz4,
+  xxhash,
+  zlib,
+  zstd,
+  versionCheckHook,
+}:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
   pname = "docker-sbx";
   version = versions.version;
 in
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation (finalAttrs: {
   inherit pname version;
 
   src = fetchurl {
-    url = "https://github.com/docker/sbx-releases/releases/download/v${version}/DockerSandboxes-linux-amd64.tar.gz";
+    url = "https://github.com/docker/sbx-releases/releases/download/v${finalAttrs.version}/DockerSandboxes-linux-amd64.tar.gz";
     sha256 = versions.sha256;
   };
 
-  nativeBuildInputs = [ autoPatchelfHook makeWrapper ];
+  # install.sh sits inside the single top-level directory of the tarball.
+  sourceRoot = "docker-sbx";
+
+  nativeBuildInputs = [
+    installShellFiles
+    versionCheckHook
+    autoPatchelfHook
+    makeWrapper
+    # install.sh refuses to run without mkfs.ext4 on PATH.
+    e2fsprogs
+  ];
 
   buildInputs = [
     lz4
     zlib
     zstd
     xxhash
-    stdenv.cc.cc.lib
+    gccForLibs
   ];
 
-  sourceRoot = "docker-sbx";
+  dontBuild = true;
+  doInstallCheck = true;
+  versionCheckProgramArg = "version";
+  versionCheckKeepEnvironment = [ "HOME" ];
+  preVersionCheck = ''
+    export HOME=$TMPDIR
+  '';
 
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin $out/libexec/lib
+    PREFIX=$out bash ./install.sh
 
-    install -m 755 sbx $out/bin/sbx
-
-    # shim + rootfs tooling
-    for f in containerd-shim-nerdbox-v1 mkfs.erofs; do
-      install -m 755 "$f" $out/libexec/
-    done
-
-    # GPU trampoline shim (amd64 only)
-    [ -f containerd-shim-nerdbox-gpu-v1 ] && \
-      install -m 755 containerd-shim-nerdbox-gpu-v1 $out/libexec/
-
-    # kernel + rootfs — this is the line that was missing.
-    # It must be "nerdbox-rootfs-*.erofs", NOT "nerdbox-initrd-*".
-    for f in nerdbox-kernel-* nerdbox-rootfs-*.erofs; do
-      [ -f "$f" ] && install -m 644 "$f" $out/libexec/
-    done
-
-    install -m 755 libsailor.so $out/libexec/lib/libsailor.so
-
-    # Self-contained at runtime:
-    #  - shim finds rootfs/kernel/mkfs.erofs via SAILOR_PATH and PATH
-    #  - daemon finds mkfs.ext4 (e2fsprogs) via PATH
     wrapProgram $out/bin/sbx \
-      --prefix PATH : $out/libexec \
-      --prefix PATH : ${e2fsprogs}/bin \
-      --set SAILOR_PATH $out/libexec
+      --prefix PATH : ${lib.makeBinPath [ e2fsprogs ]}
+
+    # Generate shell completions by running the installed binary; only
+    # possible when building natively.
+    ${lib.optionalString (stdenvNoCC.buildPlatform.canExecute stdenvNoCC.hostPlatform) ''
+      export HOME=$TMPDIR
+      $out/bin/sbx completion bash > sbx.bash
+      $out/bin/sbx completion fish > sbx.fish
+      $out/bin/sbx completion zsh > sbx.zsh
+      installShellCompletion sbx.{bash,fish,zsh}
+    ''}
 
     runHook postInstall
   '';
 
   meta = {
-    description = "Docker Sandboxes — secure, ephemeral development environments on demand";
-    homepage = "https://github.com/docker/sbx-releases";
-    license = lib.licenses.asl20;
+    description = "Safe environments for agents";
+    longDescription = ''
+      Docker Sandboxes provides sandboxes with controlled access to your
+      filesystem, network, and tools. This means your agents can work
+      autonomously without putting your machine or data at risk.
+    '';
+    homepage = "https://docs.docker.com/reference/cli/sbx/";
+    changelog = "https://github.com/docker/sbx-releases/releases/tag/v${finalAttrs.version}";
+    mainProgram = "sbx";
     platforms = [ "x86_64-linux" ];
+    license = lib.licenses.unfree;
     maintainers = with lib.maintainers; [ ];
   };
-}
+})

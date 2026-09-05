@@ -1,50 +1,83 @@
-{ stdenv, fetchurl, nodejs, lib, cacert }:
+# Run the CLI on nixpkgs nodejs from the release's platform npm package —
+# the same approach as nixpkgs' github-copilot-cli, adapted to the current
+# release layout:
+#
+# - copilot-linux-x64.tar.gz is a bun-compiled SEA binary; it segfaults when
+#   autoPatchelf rewrites its interpreter to the nix glibc, and exits
+#   silently inside the build sandbox. Not usable.
+# - github-copilot-<version>.tgz (the "universal" package) is since ~1.0.7x
+#   just an npm-loader.js that spawns a platform package.
+# - github-copilot-<version>-linux-x64.tgz is the full app (index.js,
+#   prebuilt native modules needing only core glibc, bundled ripgrep) —
+#   exactly what the loader spawns. Running it directly on nixpkgs nodejs
+#   avoids both problems.
+{
+  lib,
+  fetchurl,
+  stdenvNoCC,
+  makeWrapper,
+  nodejs,
+  bash,
+  cacert,
+  versionCheckHook,
+  writableTmpDirAsHomeHook,
+}:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
   pname = "github-copilot-cli";
   version = versions.version;
 in
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation (finalAttrs: {
   inherit pname version;
 
   src = fetchurl {
-    url = "https://registry.npmjs.org/@github/copilot/-/copilot-${version}.tgz";
+    url = "https://github.com/github/copilot-cli/releases/download/v${finalAttrs.version}/github-copilot-${finalAttrs.version}-linux-x64.tgz";
     sha256 = versions.sha256;
   };
 
+  sourceRoot = "package";
+
   dontBuild = true;
+
+  nativeBuildInputs = [
+    makeWrapper
+    versionCheckHook
+    writableTmpDirAsHomeHook
+  ];
 
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/lib/node_modules/@github/copilot
-    cp -r . $out/lib/node_modules/@github/copilot
-    mkdir -p $out/bin
-    cat > $out/bin/copilot <<EOF
-    #!${stdenv.shell}
-    export NPM_CONFIG_PREFIX="\''${XDG_DATA_HOME:-\$HOME/.local/share}/npm"
-    export npm_config_prefix="\$NPM_CONFIG_PREFIX"
-    export NPM_CONFIG_CACHE="\''${XDG_CACHE_HOME:-\$HOME/.cache}/npm"
-    mkdir -p "\$NPM_CONFIG_PREFIX" "\$NPM_CONFIG_CACHE" "\$NPM_CONFIG_PREFIX/bin"
-    export PATH="\$NPM_CONFIG_PREFIX/bin:\$PATH"
-    export SSL_CERT_DIR="${cacert}/etc/ssl/certs"
-    export SSL_CERT_FILE="${cacert}/etc/ssl/certs/ca-bundle.crt"
-    export NODE_EXTRA_CA_CERTS="${cacert}/etc/ssl/certs/ca-bundle.crt"
+    mkdir -p $out/lib/github-copilot-cli
+    cp -r . $out/lib/github-copilot-cli
 
-    user_copilot="\$NPM_CONFIG_PREFIX/bin/copilot"
-    if [ -x "\$user_copilot" ]; then
-      exec "\$user_copilot" "\$@"
-    fi
-
-    exec ${nodejs}/bin/node "$out/lib/node_modules/@github/copilot/index.js" "\$@"
-    EOF
-    chmod +x $out/bin/copilot
+    # --no-auto-update: the store is immutable, so `just update-overlay
+    # copilot` owns upgrades (the built-in updater would fail anyway).
+    makeWrapper ${nodejs}/bin/node $out/bin/copilot \
+      --add-flag $out/lib/github-copilot-cli/index.js \
+      --add-flag --no-auto-update \
+      --set-default NODE_NO_WARNINGS 1 \
+      --set SSL_CERT_DIR "${cacert}/etc/ssl/certs" \
+      --set SSL_CERT_FILE "${cacert}/etc/ssl/certs/ca-bundle.crt" \
+      --set NODE_EXTRA_CA_CERTS "${cacert}/etc/ssl/certs/ca-bundle.crt" \
+      --prefix PATH : ${lib.makeBinPath [ bash ]}
     runHook postInstall
   '';
 
+  doInstallCheck = true;
+  nativeInstallCheckInputs = [
+    versionCheckHook
+    writableTmpDirAsHomeHook
+  ];
+  versionCheckProgramArg = "--version";
+  versionCheckKeepEnvironment = [ "HOME" ];
+
   meta = {
-    description = "Github Copilot CLI";
-    license = lib.licenses.mit;
+    description = "GitHub Copilot CLI";
+    homepage = "https://github.com/github/copilot-cli";
+    changelog = "https://github.com/github/copilot-cli/releases/tag/v${finalAttrs.version}";
+    license = lib.licenses.unfree;
+    platforms = [ "x86_64-linux" ];
     maintainers = with lib.maintainers; [ ];
-    homepage = "https://github.com";
+    mainProgram = "copilot";
   };
-}
+})

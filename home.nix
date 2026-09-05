@@ -11,7 +11,6 @@
     azure-storage-azcopy
     bun
     crane
-    docker-sbx
     fluxcd-operator-mcp
     git
     gnupg
@@ -140,8 +139,8 @@ in {
       pkgs.copilot-cli
       pkgs.flux9s
       pkgs.azure-workload-identity
-      # pkgs.sbx
-      # pkgs.pi
+      pkgs.sbx
+      pkgs.pi
       # pkgs.archon
       # pkgs.some-package
       # pkgs.unstable.some-other-package
