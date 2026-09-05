@@ -214,8 +214,14 @@ in {
       package = pkgs.unstable.git;
       settings = {
         # Personal identity (user.name, user.email, ...) lives in an untracked
-        # ~/.gitconfig.local so it never lands in this public repo. Git silently
-        # ignores the include when the file is absent.
+        # ~/.gitconfig.local so it never lands in this public repo. Create the
+        # file with contents like:
+        #
+        #   [user]
+        #       name  = Eric
+        #       email = someone@example.com
+        #
+        # Git silently ignores the include when the file is absent.
         include = {
           path = "~/.gitconfig.local";
         };
