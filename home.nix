@@ -14,51 +14,6 @@
     # archon
     # some-package
   ];
-    
-  unstable-packages = with pkgs.unstable; [
-    # cloud, k8s and CLI tools requested (from unstable)
-    azure-cli
-    azure-storage-azcopy
-    bun
-    crane
-    fluxcd-operator-mcp
-    git
-    gnupg
-    istioctl
-    herdr
-    hubble
-    k6
-    kubectl
-    kubelogin
-    kubernetes-helm
-    kustomize
-    kind
-    k9s
-    kube-bench
-    kubebuilder
-    kubectx
-    open-policy-agent
-    fluxcd
-    docker
-    regal
-    openssl
-    cilium-cli
-    oras
-    sops
-    step-cli
-    trivy
-    powershell
-    (with dotnetCorePackages; combinePackages [
-      sdk_10_0
-      runtime_9_0-bin
-      runtime_8_0-bin
-    ])
-    # .NET development - use latest from unstable
-    # dotnetCorePackages.sdk_10_0-bin
-    go
-    golangci-lint
-    nodejs_24
-  ];
 
   stable-packages = with pkgs; [
     aks-mcp-server
@@ -121,6 +76,50 @@
     zip
   ];
 
+  unstable-packages = with pkgs.unstable; [
+    # cloud, k8s and CLI tools requested (from unstable)
+    azure-cli
+    azure-storage-azcopy
+    bun
+    crane
+    fluxcd-operator-mcp
+    git
+    gnupg
+    istioctl
+    herdr
+    hubble
+    k6
+    kubectl
+    kubelogin
+    kubernetes-helm
+    kustomize
+    kind
+    k9s
+    kube-bench
+    kubebuilder
+    kubectx
+    open-policy-agent
+    fluxcd
+    docker
+    regal
+    openssl
+    cilium-cli
+    oras
+    sops
+    step-cli
+    trivy
+    powershell
+    (with dotnetCorePackages; combinePackages [
+      sdk_10_0
+      runtime_9_0-bin
+      runtime_8_0-bin
+    ])
+    # .NET development - use latest from unstable
+    # dotnetCorePackages.sdk_10_0-bin
+    go
+    golangci-lint
+    nodejs_24
+  ];
 
 in {
   imports = [
@@ -140,9 +139,9 @@ in {
   };
 
   home.packages =
-    stable-packages
-    ++ unstable-packages
-    ++ custom-packages;
+    custom-packages
+    ++ stable-packages
+    ++ unstable-packages;
 
   # Auto-start gnome-keyring secret service
   services.gnome-keyring = {
