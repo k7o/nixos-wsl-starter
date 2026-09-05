@@ -9,9 +9,11 @@ default:
 update-overlay name:
   bash ./scripts/update-overlay.sh {{name}}
 
-# Update all overlay versions from the shared manifest
+# Update all overlay versions from the shared manifest, then eval the system
+# toplevel so a bad hash/tag is caught before you reach `just rebuild`.
 update-all-overlays:
   bash ./scripts/update-overlay.sh --all
+  nix eval .#nixosConfigurations.nixos.config.system.build.toplevel.drvPath
 
 # Apply the system configuration from ~/configuration
 rebuild:

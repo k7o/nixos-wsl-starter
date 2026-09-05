@@ -27,17 +27,12 @@
     with inputs; let
       overlayRegistry = builtins.fromJSON (builtins.readFile ./overlays/registry.json);
 
-      customOverlayModules = builtins.map (
-        overlay: final: prev:
-          let
-            packagePath = ./. + "/overlays/${overlay.directory}/package.nix";
-          in
-            builtins.listToAttrs [
-              {
-                name = overlay.attribute;
-                value = prev.callPackage packagePath {};
-              }
-            ]
+      # Each registry entry becomes a one-attribute overlay exposing
+      # pkgs.<attribute> built from overlays/<directory>/package.nix.
+      customOverlays = builtins.map (
+        overlay: final: prev: {
+          ${overlay.attribute} = prev.callPackage (./. + "/overlays/${overlay.directory}/package.nix") {};
+        }
       ) overlayRegistry.overlays;
 
       nixpkgsWithOverlays = system: (import nixpkgs {
@@ -57,7 +52,9 @@
               config = prev.config;
             };
           })
-        ] ++ customOverlayModules;
+          # Note: customOverlays applies to the stable set only; pkgs.unstable
+          # intentionally does not expose the custom attributes.
+        ] ++ customOverlays;
       });
 
       configurationDefaults = args: {

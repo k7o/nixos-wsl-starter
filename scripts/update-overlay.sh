@@ -114,9 +114,15 @@ update_overlay() {
       fi
       ;;
     github-release)
-      local repo latest_tag strip_prefix asset_template
+      local repo latest_tag strip_prefix asset_template curl_args
       repo=$(jq -r '.updater.repo' <<<"$overlay_json")
-      latest_tag=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')
+      # GitHub API rate-limits unauthenticated requests to 60/hour; use a
+      # token when the environment provides one.
+      curl_args=(-fsSL)
+      if [[ -n "${GITHUB_TOKEN:-}" ]]; then
+        curl_args+=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+      fi
+      latest_tag=$(curl "${curl_args[@]}" "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name')
       strip_prefix=$(jq -r '.updater.stripPrefix // ""' <<<"$overlay_json")
       asset_template=$(jq -r '.updater.assetUrlTemplate' <<<"$overlay_json")
       version="$latest_tag"

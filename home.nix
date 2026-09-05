@@ -28,7 +28,6 @@
     kubebuilder
     kubectx
     open-policy-agent
-    python313Packages.pip
     fluxcd
     docker
     regal
@@ -62,19 +61,18 @@
     dust
     e2fsprogs
     envsubst
-    erofs-utils    
+    erofs-utils
     eza
     fd
     findutils
     fx
     gcc
     ginkgo
-    git-credential-manager
     git-crypt
     git-filter-repo
     gnome-keyring
     gnumake
-    gnutar    
+    gnutar
     hostname-debian
     htop
     httpie
@@ -93,7 +91,7 @@
     yaml-language-server
     operator-sdk
     procs
-    python314
+    (python314.withPackages (ps: [ ps.pip ]))
     ranger
     ripgrep
     rsync
@@ -107,7 +105,6 @@
     tree
     unzip
     wget
-    wl-clipboard
     yamllint
     yarn
     yq-go
@@ -121,11 +118,10 @@ in {
   home.stateVersion = "26.05";
 
   home = {
-    username = "${username}";
+    username = username;
     homeDirectory = "/home/${username}";
 
     sessionVariables.EDITOR = "nvim";
-    # FIXME: set your preferred $SHELL
     sessionVariables.SHELL = "/etc/profiles/per-user/${username}/bin/bash";
 
     shell.enableBashIntegration = true;
@@ -217,15 +213,17 @@ in {
       enable = true;
       package = pkgs.unstable.git;
       settings = {
+        # Personal identity (user.name, user.email, ...) lives in an untracked
+        # ~/.gitconfig.local so it never lands in this public repo. Git silently
+        # ignores the include when the file is absent.
+        include = {
+          path = "~/.gitconfig.local";
+        };
         credential = {
           helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe";
           "https://dev.azure.com" = {
             useHttpPath = true;
           };
-        };
-        user = {
-          email = "eric@example.com"; # FIXME: set your git email
-          name = "eric"; #FIXME: set your git username
         };
         push = {
           default = "current";
@@ -240,7 +238,7 @@ in {
         init = {
           defaultBranch = "main";
         };
-      };      
+      };
     };
     gh = {
       enable = true;

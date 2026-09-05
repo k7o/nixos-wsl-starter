@@ -1,3 +1,5 @@
-*key
+*.key
+*.pem
+id_rsa*
 .idea
 result

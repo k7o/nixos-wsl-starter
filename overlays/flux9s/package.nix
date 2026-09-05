@@ -1,28 +1,39 @@
-{ stdenv, fetchurl, lib, autoPatchelfHook, openssl }:
+{
+  lib,
+  stdenvNoCC,
+  fetchurl,
+  autoPatchelfHook,
+  gccForLibs,
+  openssl,
+}:
 let
   versions = builtins.fromJSON (builtins.readFile ./versions.json);
   pname = "flux9s";
   version = versions.version;
 in
-stdenv.mkDerivation rec {
+stdenvNoCC.mkDerivation (finalAttrs: {
   inherit pname version;
 
   src = fetchurl {
-    url = "https://github.com/dgunzy/flux9s/releases/download/v${version}/flux9s-linux-x86_64-gnu.tar.gz";
+    url = "https://github.com/dgunzy/flux9s/releases/download/v${finalAttrs.version}/flux9s-linux-x86_64-gnu.tar.gz";
     sha256 = versions.sha256;
   };
 
   nativeBuildInputs = [ autoPatchelfHook ];
-  
+
   buildInputs = [
+    gccForLibs
     openssl
-    stdenv.cc.cc.lib
   ];
 
   sourceRoot = ".";
 
+  dontBuild = true;
+
   installPhase = ''
+    runHook preInstall
     install -m755 -D flux9s $out/bin/flux9s
+    runHook postInstall
   '';
 
   meta = {
@@ -31,5 +42,6 @@ stdenv.mkDerivation rec {
     license = lib.licenses.asl20;
     platforms = [ "x86_64-linux" ];
     maintainers = with lib.maintainers; [ ];
+    mainProgram = "flux9s";
   };
-}
+})

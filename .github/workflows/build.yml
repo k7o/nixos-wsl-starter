@@ -12,8 +12,21 @@ on:
   workflow_call: {}
 
 jobs:
+  eval:
+    name: Eval
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: "access-tokens = github.com=${{ github.token }}"
+      - name: Evaluate system toplevel
+        run: nix eval .#nixosConfigurations.nixos.config.system.build.toplevel.drvPath
+
   build:
     name: Build
+    needs: eval
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

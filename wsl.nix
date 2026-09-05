@@ -7,12 +7,11 @@
 }: {
   time.timeZone = "Europe/Amsterdam";
 
-  networking.hostName = "${hostname}";
+  networking.hostName = hostname;
 
   environment.variables.PYTHONWARNINGS = "ignore::FutureWarning";
-  environment.enableAllTerminfo = true;
   environment.pathsToLink = [ "/share/bash-completion" ];
-  
+
   # Provide glibc-style dynamic loader behaviour for bundled native ELF binaries
   # (enables running glibc-linked executables that expect /lib64/ld-linux-x86-64.so.2)
   programs.nix-ld.enable = true;
@@ -23,11 +22,7 @@
     isNormalUser = true;
     linger = true;
     shell = pkgs.bashInteractive;
-    extraGroups = [
-      "wheel"
-      # uncomment the next line if you want to run docker without sudo
-      "docker"
-    ];
+    extraGroups = [ "wheel" ];
   };
 
   users.users.root.linger = true;
