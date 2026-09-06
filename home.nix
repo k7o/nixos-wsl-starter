@@ -17,6 +17,7 @@
 
   stable-packages = with pkgs; [
     aks-mcp-server
+    basez
     bat
     bottom
     cacert
