@@ -71,7 +71,9 @@
     tree
     unzip
     wget
+    wl-clipboard
     yamllint
+    xclip
     yarn
     yq-go
     zip
