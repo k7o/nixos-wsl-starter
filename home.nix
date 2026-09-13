@@ -109,6 +109,7 @@
     cilium-cli
     oras
     sops
+    starship
     step-cli
     trivy
     powershell
@@ -190,6 +191,7 @@ in {
 
     starship = {
       enable = true;
+      package = pkgs.unstable.starship;
       settings = {
         azure.disabled = false;
         aws.disabled = true;
