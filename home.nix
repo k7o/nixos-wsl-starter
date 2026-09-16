@@ -101,6 +101,7 @@
     kube-bench
     kubebuilder
     kubectx
+    lazygit
     open-policy-agent
     fluxcd
     docker
