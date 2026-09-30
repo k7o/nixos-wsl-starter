@@ -59,6 +59,16 @@
         "stripPrefix": "v",
         "assetUrlTemplate": "https://github.com/docker/sbx-releases/releases/download/${tag}/DockerSandboxes-linux-amd64.tar.gz"
       }
+    },
+    {
+      "attribute": "herdr",
+      "directory": "herdr",
+      "updater": {
+        "type": "github-release",
+        "repo": "herdrdev/herdr",
+        "stripPrefix": "v",
+        "assetUrlTemplate": "https://github.com/herdrdev/herdr/releases/download/${tag}/herdr-linux-x86_64"
+      }
     }
   ]
 }

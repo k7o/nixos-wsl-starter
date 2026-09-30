@@ -11,6 +11,7 @@
     azure-workload-identity
     sbx
     pi
+    herdr
     # archon
     # some-package
   ];
@@ -70,6 +71,7 @@
     tmux
     tree
     unzip
+    uv
     wget
     wl-clipboard
     yamllint
@@ -89,7 +91,6 @@
     git
     gnupg
     istioctl
-    herdr
     hubble
     k6
     kubectl
