@@ -48,6 +48,10 @@
     extraBin = [
       { src = "${pkgs.coreutils}/bin/install"; }
       { src = "${pkgs.coreutils}/bin/mv"; }
+      # Docker Desktop probes the backend socket with `wsl -e test -s ...`.
+      # That runs on the distro's default PATH, which includes /bin, so
+      # coreutils' test must exist there or the WSL integration never comes up.
+      { src = "${pkgs.coreutils}/bin/test"; }
     ];
   };
 
