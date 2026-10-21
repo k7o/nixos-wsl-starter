@@ -18,6 +18,7 @@
 
   stable-packages = with pkgs; [
     aks-mcp-server
+    azure-cli
     basez
     bat
     bottom
@@ -83,7 +84,6 @@
 
   unstable-packages = with pkgs.unstable; [
     # cloud, k8s and CLI tools requested (from unstable)
-    azure-cli
     azure-storage-azcopy
     bun
     crane
