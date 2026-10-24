@@ -234,7 +234,7 @@ in {
           path = "~/.gitconfig.local";
         };
         credential = {
-          helper = "/mnt/c/Program\\ Files/Git/mingw64/bin/git-credential-manager.exe";
+          helper = "/mnt/c/Program\\ Files/Git/ucrt64/bin/git-credential-manager.exe";
           "https://dev.azure.com" = {
             useHttpPath = true;
           };
