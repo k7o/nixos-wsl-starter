@@ -14,6 +14,17 @@
     herdr
     # archon
     # some-package
+
+    # .NET: official Microsoft builds (see overlays/dotnet-*), combined into a
+    # single tree because they are separate derivations. The 11.0 SDK already
+    # bundles the 11.0.0 NETCore/ASP.NET Core runtimes; the 10.0 packages are
+    # for running net10.0 apps. All three come from the overlays, so nothing
+    # here follows the nixpkgs-unstable pin.
+    (pkgs.dotnetCorePackages.combinePackages [
+      dotnet-sdk-11
+      dotnet-runtime-10
+      dotnet-aspnetcore-10
+    ])
   ];
 
   stable-packages = with pkgs; [
@@ -115,13 +126,6 @@
     step-cli
     trivy
     powershell
-    (with dotnetCorePackages; combinePackages [
-      sdk_10_0
-      runtime_9_0-bin
-      runtime_8_0-bin
-    ])
-    # .NET development - use latest from unstable
-    # dotnetCorePackages.sdk_10_0-bin
     go
     golangci-lint
     nodejs_24

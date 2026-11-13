@@ -69,6 +69,33 @@
         "stripPrefix": "v",
         "assetUrlTemplate": "https://github.com/herdrdev/herdr/releases/download/${tag}/herdr-linux-x86_64"
       }
+    },
+    {
+      "attribute": "dotnet-sdk-11",
+      "directory": "dotnet-sdk-11",
+      "updater": {
+        "type": "dotnet-release",
+        "channel": "11.0",
+        "select": "sdk_11_0"
+      }
+    },
+    {
+      "attribute": "dotnet-runtime-10",
+      "directory": "dotnet-runtime-10",
+      "updater": {
+        "type": "dotnet-release",
+        "channel": "10.0",
+        "select": "runtime_10_0"
+      }
+    },
+    {
+      "attribute": "dotnet-aspnetcore-10",
+      "directory": "dotnet-aspnetcore-10",
+      "updater": {
+        "type": "dotnet-release",
+        "channel": "10.0",
+        "select": "aspnetcore_10_0"
+      }
     }
   ]
 }

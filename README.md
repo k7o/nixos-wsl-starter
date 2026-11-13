@@ -81,6 +81,15 @@ Current updater types:
 
 - `npm`: provide `package`, and optionally `extraVersionFields`
 - `github-release`: provide `repo`, optional `stripPrefix`, and `assetUrlTemplate`
+- `dotnet-release`: provide `channel` (e.g. `"11.0"`), optional `select`
+  (`sdk_11_0`, `runtime_10_0`, `aspnetcore_10_0`; default `sdk_<channel>`) and
+  optional `sdkVersion` to pin an exact SDK patch instead of the channel's latest
+  release. Instead of a single url+sha256 in `versions.json`, it writes
+  `releases.nix`, the release metadata consumed by `dotnetCorePackages.buildDotnetSdk`
+  (used by `overlays/dotnet-sdk-11` for the GA SDK that nixpkgs still lacks as a
+  `-bin` attribute, `overlays/dotnet-runtime-10` to always get the latest 10.0
+  patch, and `overlays/dotnet-aspnetcore-10` for the 10.0 ASP.NET Core shared
+  framework that no nixpkgs attribute provides)
 
 Examples live in `overlays/registry.json`, and the updater implementation is in `scripts/update-overlay.sh`.
 
