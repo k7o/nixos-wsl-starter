@@ -15,6 +15,12 @@
   # Provide glibc-style dynamic loader behaviour for bundled native ELF binaries
   # (enables running glibc-linked executables that expect /lib64/ld-linux-x86-64.so.2)
   programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    icu
+    openssl
+    zlib
+    stdenv.cc.cc
+  ];
 
   security.sudo.wheelNeedsPassword = false;
 
