@@ -34,6 +34,7 @@
     bat
     bottom
     cacert
+    cloudflared
     coreutils
     curl
     deadnix
