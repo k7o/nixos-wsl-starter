@@ -29,7 +29,6 @@
 
   stable-packages = with pkgs; [
     aks-mcp-server
-    azure-cli
     basez
     bat
     bottom
@@ -95,6 +94,13 @@
   ];
 
   unstable-packages = with pkgs.unstable; [
+    # azure-cli defaults to withImmutableConfig = true, which drops pip from the
+    # python env, so `az extension add/upgrade` dies with "No module named pip"
+    # (it shells out to `sys.executable -m pip install --target`). Setting it to
+    # false re-adds pip and lets extensions be installed into ~/.azure/cliextensions.
+    # For a fully declarative setup instead, use:
+    #   azure-cli.withExtensions (with azure-cli.extensions; [ aks-preview azure-devops ])
+    (azure-cli.override {withImmutableConfig = false;})
     # cloud, k8s and CLI tools requested (from unstable)
     azure-storage-azcopy
     bun
